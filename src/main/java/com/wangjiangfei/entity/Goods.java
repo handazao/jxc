@@ -24,4 +24,10 @@ public class Goods {
 
   private Integer saleTotal;// 销售总量
 
+  private String season;
+  private String goodsColour;
+  private String goodsSize;
+  private String inPurchase;
+  private String retention;
+
 }

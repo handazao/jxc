@@ -37,8 +37,10 @@
         <tr>
             <th field="goodsCode" width="50" align="center">商品编码</th>
             <th field="goodsName" width="150" align="center">商品名称</th>
-            <th field="goodsModel" width="50" align="center">商品型号</th>
-            <th field="goodsUnit" width="50" align="center">商品单位</th>
+            <th field="goodsModel" width="50" align="center">商品款号</th>
+            <th field="season" width="40" align="center">季节</th>
+            <th field="goodsColour" width="40" align="center">商品颜色</th>
+            <th field="goodsSize" width="40" align="center">商品尺码</th>
             <th field="price" width="50" align="center" formatter=setPriceFormatter>单价</th>
             <th field="goodsNum" width="50" align="center">数量</th>
             <th field="total" width="50" align="center" formatter=setPriceFormatter>总金额</th>
@@ -94,8 +96,10 @@
                     <th field="goodsId" width="30" hidden="true" align="center">编号</th>
                     <th field="goodsCode" width="40" align="center">商品编码</th>
                     <th field="goodsName" width="150" align="center">商品名称</th>
-                    <th field="goodsModel" width="50" align="center">商品型号</th>
-                    <th field="goodsUnit" width="30" align="center">单位</th>
+                    <th field="goodsModel" width="50" align="center">商品款号</th>
+                    <th field="season" width="40" align="center">季节</th>
+                    <th field="goodsColour" width="40" align="center">商品颜色</th>
+                    <th field="goodsSize" width="40" align="center">商品尺码</th>
                     <th field="lastPurchasingPrice" width="50" align="center"  formatter="setPriceFormatter">上次进价</th>
                     <th field="purchasingPrice" width="50" align="center"  formatter="setPriceFormatter">成本均价</th>
                     <th field="inventoryQuantity" width="50" align="center">库存数量</th>
@@ -122,10 +126,16 @@
                             <td>&nbsp;<input class="readonly" name="goodsName" type="text" readonly="readonly"/></td>
                         </tr>
                         <tr>
-                            <td>商品型号:</td>
+                            <td>商品款号:</td>
                             <td>&nbsp;<input class="readonly" name="goodsModel" type="text" readonly="readonly"/></td>
                             <td>商品单位:</td>
                             <td>&nbsp;<input class="readonly" name="goodsUnit" type="text" readonly="readonly"/></td>
+                        </tr>
+                        <tr>
+                            <td>商品颜色:</td>
+                            <td>&nbsp;<input class="readonly" name="goodsColour" type="text" readonly="readonly"/></td>
+                            <td>商品尺寸:</td>
+                            <td>&nbsp;<input class="readonly" name="goodsSize" type="text" readonly="readonly"/></td>
                         </tr>
                         <tr>
                             <td>上次进价:</td>

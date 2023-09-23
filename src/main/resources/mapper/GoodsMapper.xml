@@ -21,6 +21,11 @@
         <result column="goods_unit" property="goodsUnit" jdbcType="VARCHAR" />
         <result column="goods_type_id" property="goodsTypeId" jdbcType="INTEGER" />
         <result column="goods_type_name" property="goodsTypeName" jdbcType="VARCHAR" />
+        <result column="season" property="season" jdbcType="VARCHAR" />
+        <result column="goods_colour" property="goodsColour" jdbcType="VARCHAR" />
+        <result column="goods_size" property="goodsSize" jdbcType="VARCHAR" />
+        <result column="in_purchase" property="inPurchase" jdbcType="VARCHAR" />
+        <result column="retention" property="retention" jdbcType="VARCHAR" />
     </resultMap>
 
     <select id="getGoodsList" resultMap="BaseResultMap">
@@ -40,6 +45,9 @@
             t_goods.selling_price,
             t_goods.state,
             t_goods.goods_unit,
+            t_goods.goods_colour,
+            t_goods.goods_size,
+            t_goods.season,
             t_goods_type.goods_type_name
         FROM
             t_goods
@@ -91,13 +99,13 @@
         (
         goods_code, goods_name, inventory_quantity, min_num, goods_model,
         goods_producer, purchasing_price,last_purchasing_price,remarks,selling_price,
-        state,goods_unit,goods_type_id
+        state,goods_unit,goods_type_id,goods_colour,goods_size,season
         )
         VALUES
         (
         #{goodsCode}, #{goodsName}, #{inventoryQuantity}, #{minNum}, #{goodsModel},
         #{goodsProducer}, #{purchasingPrice}, #{lastPurchasingPrice}, #{remarks}, #{sellingPrice},
-        #{state}, #{goodsUnit}, #{goodsTypeId}
+        #{state}, #{goodsUnit}, #{goodsTypeId}, #{goodsColour}, #{goodsSize}, #{season}
         )
     </insert>
 
@@ -143,6 +151,15 @@
             <if test="goodsTypeId != '' and goodsTypeId != null">
                 goods_type_id = #{goodsTypeId},
             </if>
+            <if test="goodsColour != '' and goodsColour != null">
+                goods_colour = #{goodsColour},
+            </if>
+            <if test="goodsSize != '' and goodsSize != null">
+                goods_size = #{goodsSize},
+            </if>
+            <if test="season != '' and season != null">
+                season = #{season},
+            </if>
         </set>
         WHERE t_goods.goods_id = #{goodsId}
     </update>
@@ -168,6 +185,9 @@
             t_goods.selling_price,
             t_goods.state,
             t_goods.goods_unit,
+            t_goods.goods_colour,
+            t_goods.goods_size,
+            t_goods.season,
             t_goods.goods_type_id
         FROM
             t_goods
@@ -192,6 +212,9 @@
             t_goods.selling_price,
             t_goods.state,
             t_goods.goods_unit,
+            t_goods.goods_colour,
+            t_goods.goods_size,
+            t_goods.season,
             t_goods_type.goods_type_name
         FROM
             t_goods
@@ -243,6 +266,9 @@
             t_goods.selling_price,
             t_goods.state,
             t_goods.goods_unit,
+            t_goods.goods_colour,
+            t_goods.goods_size,
+            t_goods.season,
             t_goods_type.goods_type_name
         FROM
             t_goods
@@ -294,6 +320,9 @@
             t_goods.selling_price,
             t_goods.state,
             t_goods.goods_unit,
+            t_goods.goods_colour,
+            t_goods.goods_size,
+            t_goods.season,
             t_goods_type.goods_type_name
         FROM
             t_goods
@@ -357,6 +386,9 @@
             t_goods.state,
             t_goods.goods_unit,
             t_goods.goods_type_id,
+            t_goods.goods_colour,
+            t_goods.goods_size,
+            t_goods.season,
             t_goods_type.goods_type_name
         FROM
             t_goods

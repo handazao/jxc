@@ -45,15 +45,17 @@
         <tr>
             <th field="goodsId" width="30" align="center">编号</th>
             <th field="goodsCode" width="50" align="center">商品编码</th>
-            <th field="goodsName" width="250" align="center">商品名称</th>
-            <th field="goodsModel" width="60" align="center">商品型号</th>
+            <th field="goodsName" width="100" align="center">商品名称</th>
+            <th field="goodsModel" width="60" align="center">商品款号</th>
             <th field="goodsTypeId" width="40" align="center" hidden="true" formatter="setGoodsIdFormatter">商品类别ID</th>
             <th field="goodsTypeName" width="40" align="center">商品类别</th>
-            <th field="goodsUnit" width="40" align="center">商品单位</th>
+            <th field="season" width="40" align="center">季节</th>
+            <th field="goodsColour" width="40" align="center">商品颜色</th>
+            <th field="goodsSize" width="40" align="center">商品尺码</th>
             <th field="purchasingPrice" width="40" align="center"  formatter="setPriceFormatter">采购价格</th>
             <th field="sellingPrice" width="40" align="center"  formatter="setPriceFormatter">出售价格</th>
             <th field="minNum" width="40" align="center">库存下限</th>
-            <th field="goodsProducer" width="150" align="center">生产厂商</th>
+            <th field="goodsProducer" width="100" align="center">生产厂商</th>
             <th field="remarks" width="150" align="center" hidden="true">备注</th>
         </tr>
         </thead>
@@ -90,14 +92,23 @@
                 </td>
             </tr>
             <tr>
-                <td>商品型号:</td>
+                <td>商品款号:</td>
                 <td>
                     <input id="model" name="goodsModel" type="text"/>
                 </td>
-                <td>商品单位:</td>
+                <td>季节:</td>
                 <td>
-                    <input id="unit" name="goodsUnit" type="text" readonly="readonly"/>
-                    <a href="javascript:openUnitDlg()" class="easyui-linkbutton" iconCls="search" plain="true"></a>
+                    <input id="season" name="season" type="text"/>
+                </td>
+            </tr>
+            <tr>
+                <td>商品颜色:</td>
+                <td>
+                    <input id="goodsColour" name="goodsColour" type="text"/>
+                </td>
+                <td>商品尺寸:</td>
+                <td>
+                    <input id="goodsSize" name="goodsSize" type="text"/>
                 </td>
             </tr>
             <tr>

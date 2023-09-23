@@ -74,6 +74,7 @@ public class SaleListGoodsServiceImpl implements SaleListGoodsService {
             // 修改商品库存，状态
             Goods goods = goodsDao.findByGoodsId(saleListGoods.getGoodsId());
 
+            //todo
             goods.setInventoryQuantity(goods.getInventoryQuantity()-saleListGoods.getGoodsNum());
 
             goods.setState(2);

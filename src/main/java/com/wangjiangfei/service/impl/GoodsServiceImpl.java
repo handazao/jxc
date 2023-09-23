@@ -83,7 +83,7 @@ public class GoodsServiceImpl implements GoodsService {
     public ServiceVO getCode() {
 
         // 获取当前商品最大编码
-        String code = goodsDao.getMaxCode();
+        String code = goodsDao.getMaxCode() == null ?  "0" : goodsDao.getMaxCode();
 
         // 在现有编码上加1
         Integer intCode = Integer.parseInt(code) + 1;

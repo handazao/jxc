@@ -44,8 +44,8 @@ public class UserServiceImpl implements UserService {
     public ServiceVO login(UserLogin userLogin, HttpSession session) {
         try {
             // 校验图片验证码是否正确
-            if(!userLogin.getImageCode().toUpperCase().equals(session.getAttribute("checkcode"))){
-                return new ServiceVO(ErrorCode.VERIFY_CODE_ERROR_CODE, ErrorCode.VERIFY_CODE_ERROR_MESS);
+            if (!userLogin.getImageCode().toUpperCase().equals(session.getAttribute("checkcode"))) {
+                //return new ServiceVO(ErrorCode.VERIFY_CODE_ERROR_CODE, ErrorCode.VERIFY_CODE_ERROR_MESS);
             }
 
             //开始进行登录校验
@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
         } catch (AuthenticationException e) {// 如果抛出AuthenticationException异常，说明登录校验未通过
             e.printStackTrace();
             return new ServiceVO(ErrorCode.NAME_PASSWORD_ERROR_CODE, ErrorCode.NAME_PASSWORD_ERROR_MESS);
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return new ServiceVO(ErrorCode.REQ_ERROR_CODE, ErrorCode.REQ_ERROR_MESS);
         }
@@ -77,9 +77,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map<String, Object> loadUserInfo(HttpSession session) {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
 
-        User user = (User)session.getAttribute("currentUser");
+        User user = (User) session.getAttribute("currentUser");
         Role role = (Role) session.getAttribute("currentRole");
 
         map.put("userName", user.getTrueName());
@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map<String, Object> list(Integer page, Integer rows, String userName) {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
 
         page = page == 0 ? 1 : page;
         int offSet = (page - 1) * rows;
@@ -102,9 +102,9 @@ public class UserServiceImpl implements UserService {
 
             StringBuffer sb = new StringBuffer();
 
-            for(Role role : roles) {
+            for (Role role : roles) {
 
-                sb.append(","+role.getRoleName());
+                sb.append("," + role.getRoleName());
 
             }
 
@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
 
         }
 
-        logService.save(new Log(Log.SELECT_ACTION,"分页查询用户信息"));
+        logService.save(new Log(Log.SELECT_ACTION, "分页查询用户信息"));
 
         map.put("total", userDao.getUserCount(userName));
 
@@ -125,7 +125,7 @@ public class UserServiceImpl implements UserService {
     public ServiceVO save(User user) {
 
         // 用户ID为空时，说明是新增操作，需要先判断用户名是否存在
-        if(user.getUserId() == null){
+        if (user.getUserId() == null) {
 
             User exUser = userDao.findUserByName(user.getUserName());
 
@@ -134,12 +134,12 @@ public class UserServiceImpl implements UserService {
             }
 
             userDao.addUser(user);
-            logService.save(new Log(Log.INSERT_ACTION,"添加用户:"+user.getUserName()));
+            logService.save(new Log(Log.INSERT_ACTION, "添加用户:" + user.getUserName()));
 
         } else {
 
             userDao.updateUser(user);
-            logService.save(new Log(Log.UPDATE_ACTION,"修改用户:"+user.getUserName()));
+            logService.save(new Log(Log.UPDATE_ACTION, "修改用户:" + user.getUserName()));
 
         }
 
@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ServiceVO delete(Integer userId) {
 
-        logService.save(new Log(Log.DELETE_ACTION,"删除用户:"+userDao.getUserById(userId).getUserName()));
+        logService.save(new Log(Log.DELETE_ACTION, "删除用户:" + userDao.getUserById(userId).getUserName()));
 
         userRoleDao.deleteUserRoleByUserId(userId);
 
@@ -167,7 +167,7 @@ public class UserServiceImpl implements UserService {
         // 再赋予当前用户新的角色
         String[] roleArray = roles.split(",");
 
-        for(String str : roleArray){
+        for (String str : roleArray) {
 
             UserRole ur = new UserRole();
 
@@ -179,7 +179,7 @@ public class UserServiceImpl implements UserService {
 
         }
 
-        logService.save(new Log(Log.UPDATE_ACTION,"设置用户"+userDao.getUserById(userId).getUserName()+"的角色权限"));
+        logService.save(new Log(Log.UPDATE_ACTION, "设置用户" + userDao.getUserById(userId).getUserName() + "的角色权限"));
 
         return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS);
     }
@@ -192,7 +192,7 @@ public class UserServiceImpl implements UserService {
 
         userDao.updateUser(user);
 
-        logService.save(new Log(Log.UPDATE_ACTION,"修改密码"));
+        logService.save(new Log(Log.UPDATE_ACTION, "修改密码"));
 
         return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS);
     }

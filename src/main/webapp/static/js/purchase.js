@@ -1,7 +1,7 @@
 $(function(){
 	// 设置默认收货时间
 	$('#purchaseDate').datebox('setValue',genTodayStr());
-	
+
 	// 设置时间组件可选的时间范围（不能小于当前日期）
 	$('#purchaseDate').datebox('calendar').calendar({
 		validator: function(date){
@@ -10,8 +10,8 @@ $(function(){
 			return d <= date;
 		}
 	});
-	
-	
+
+
 	// 设置下拉框
 	$('#supplier').combobox({
 		 mode:'remote',
@@ -19,10 +19,10 @@ $(function(){
 		 valueField:'supplierId',
 		 textField:'supplierName'
 	});
-	
+
 	// 设置单号
 	$('#purchaseNumber').html(genOddNumbers('JH'));
-	
+
 	// 绑定双击事件
 	$('#dg2').datagrid({
 		onDblClickRow:function(rowIndex,rowData){
@@ -46,7 +46,7 @@ $(function(){
 			$('#num').focus();
 		}
 	});
-	
+
 	$('#dg').datagrid({
 		onDblClickRow:function(rowIndex,rowData){
 			$('#chooseDlg').dialog({
@@ -71,7 +71,7 @@ $(function(){
 			sessionStorage.setItem('rowIndex',rowIndex);
 		}
 	});
-	
+
 	// 为商品类别的添加和删除按钮单独绑定事件，防止按钮禁用后出现事件不可用的BUG
 	$('#addButton').bind('click', openGoodsTypeAddDialog);
 	$('#deleteButton').bind('click', deleteGoodsType);
@@ -118,8 +118,8 @@ function openPurchaseListGoodsDialog(){
  * 格式价格
  */
 function setPriceFormatter(value,row){
-	
-	
+
+
 	return "￥"+value;
 }
 
@@ -176,7 +176,7 @@ function saveData(){
 				$.messager.alert({
 					title:'系统提示',
 					msg: '保存成功',
-					icon:'info', 
+					icon:'info',
 					top:$(window).height()/4
 				});
 				$('#typeDlg').dialog('close');
@@ -218,8 +218,8 @@ function deleteGoodsType(){
 							$.messager.alert({
 								title:'系统提示',
 								msg: '删除成功',
-								icon:'info', 
-								top:$(window).height()/4 
+								icon:'info',
+								top:$(window).height()/4
 							});
 							$('#tree').tree('reload');
 							$('#addButton').linkbutton('disable');
@@ -228,8 +228,8 @@ function deleteGoodsType(){
 							$.messager.alert({
 								title:'系统提示',
 								msg:result.msg,
-								icon:'error', 
-								top:$(window).height()/4 
+								icon:'error',
+								top:$(window).height()/4
 							});
 						}
 					}
@@ -255,7 +255,7 @@ function searchGoods(){
             goodsName:$('#s_name').val(),
 		});
 	}
-	
+
 }
 
 /**
@@ -267,12 +267,12 @@ function openGoodsChooseDialog(){
 		$.messager.alert({
 			title:'系统提示',
 			msg:'请选择一条数据',
-			icon:'info', 
+			icon:'info',
 			top:$(window).height()/4
 		});
 		return;
 	}
-	
+
 	$('#chooseDlg').dialog({
 		title:'选择商品',
 		closed:false,
@@ -309,12 +309,12 @@ function closeGoodsChooseDlg(){
 function saveGoodsData(type){
 	var num = $('#num').val();
 	var price = $('#price').val();
-	
+
 	if(num === null || num === ''){
 		$.messager.alert({
 			title:'系统提示',
 			msg:'请输入库存',
-			icon:'error', 
+			icon:'error',
 			top:$(window).height()/4
 		});
 		return;
@@ -323,12 +323,12 @@ function saveGoodsData(type){
 		$.messager.alert({
 			title:'系统提示',
 			msg:'请输入单价',
-			icon:'error', 
+			icon:'error',
 			top:$(window).height()/4
 		});
 		return;
 	}
-	
+
 	var selections = $('#dg2').datagrid('getSelections');
 	var rows = $('#dg').datagrid('getRows');
 	// 如果新增的商品，已经在商品清单列表里存在，那么则不再新增行记录，而是将数量和总金额进行累加
@@ -341,7 +341,7 @@ function saveGoodsData(type){
 			break;
 		}
 	}
-	
+
 	if (isExist) {
 		$('#dg').datagrid('updateRow',{
 			index:$('#dg').datagrid('getRowIndex',existRow),
@@ -372,11 +372,11 @@ function saveGoodsData(type){
 			total:$('#num').val()*$('#price').val()
 		});
 	}
-	
+
 	calculationMount();
-	
+
 	closeGoodsChooseDlg();
-	
+
 	if (type === 2) {
 		$('#dlg').dialog('close');
 	}
@@ -391,7 +391,7 @@ function deletePurchaseListGoods(){
 		$.messager.alert({
 			title:'系统提示',
 			msg:'请选择一条要删除数据',
-			icon:'info', 
+			icon:'info',
 			top:$(window).height()/4
 		});
 		return;
@@ -432,12 +432,12 @@ function openGoodsChooseModifyDialog(){
 		$.messager.alert({
 			title:'系统提示',
 			msg:'请选择一条要修改的数据',
-			icon:'info', 
+			icon:'info',
 			top:$(window).height()/4
 		});
 		return;
 	}
-	
+
 	$('#chooseDlg').dialog({
 		title:'修改商品',
 		closed:false,
@@ -466,12 +466,12 @@ function openGoodsChooseModifyDialog(){
 function updateGoodsData() {
 	var num = $('#num').val();
 	var price = $('#price').val();
-	
+
 	if (num === null || num === '') {
 		$.messager.alert({
 			title:'系统提示',
 			msg:'请输入库存',
-			icon:'error', 
+			icon:'error',
 			top:$(window).height()/4
 		});
 		return;
@@ -480,7 +480,7 @@ function updateGoodsData() {
 		$.messager.alert({
 			title:'系统提示',
 			msg:'请输入单价',
-			icon:'error', 
+			icon:'error',
 			top:$(window).height()/4
 		});
 		return;
@@ -507,17 +507,17 @@ function savePurchaseData() {
 	$('#fm').form('submit',{
 		url:'/purchaseListGoods/save?purchaseNumber='+purchaseNumber,
 		onSubmit:function(){
-			
+
 			if ($('#dg').datagrid('getRows').length < 1) {
 				$.messager.alert({
 					title:'系统提示',
 					msg:'请添加进货商品',
-					icon:'error', 
+					icon:'error',
 					top:$(window).height()/4
 				});
 				return false;
 			}
-			
+
 			if($('#supplier').combobox('getData')===null ||
 				$('#supplier').combobox('getData')==='' ||
 					$('#supplier').combobox('getValue')===null ||
@@ -525,32 +525,32 @@ function savePurchaseData() {
 				$.messager.alert({
 					title:'系统提示',
 					msg:'请选择供应商',
-					icon:'error', 
+					icon:'error',
 					top:$(window).height()/4
 				});
 				return false;
 			}
-			
+
 			if($('#amountPaid').val()===null || $('#amountPaid').val()===''){
 				$.messager.alert({
 					title:'系统提示',
 					msg:'请填写实付金额',
-					icon:'error', 
+					icon:'error',
 					top:$(window).height()/4
 				});
 				return false;
 			}
-			
+
 			if ($('#amountPaid').val() > $('#amountPayable').val()) {
 				$.messager.alert({
 					title:'系统提示',
 					msg:'实付金额大于应付金额',
-					icon:'error', 
+					icon:'error',
 					top:$(window).height()/4
 				});
 				return false;
 			}
-			
+
 			return true;
 		},
 		success:function(result){
@@ -559,7 +559,7 @@ function savePurchaseData() {
 				$.messager.alert({
 					title:'系统提示',
 					msg: '保存成功',
-					icon:'info', 
+					icon:'info',
 					top:$(window).height()/4,
 					fn:function(){
 						window.location.reload();
@@ -569,10 +569,43 @@ function savePurchaseData() {
 				$.messager.alert({
 					title:'系统提示',
 					msg:resultObj.msg,
-					icon:'error', 
+					icon:'error',
 					top:$(window).height()/4
 				});
 			}
 		}
 	});
+}
+
+/**
+* 保存并新增进货清单
+*/
+ function uploadidalogonline() {
+    $('#uploadonlineinfo').window('open').dialog('setTitle','文件上传');
+
+}
+function uploadonline() {
+    $('#fam').form('submit',{
+        url: "/purchaseListGoods/importPurchase",
+        onSubmit: function(){
+
+        },
+        success: function(result){
+            var result = eval('('+result+')');
+
+            if (result.success){
+                $('#uploadonlineinfo').window('close');
+                $('#dg2').datagrid('reload');
+                $.messager.show({
+                    title: 'Success',
+                    msg: '上传成功'
+                });
+            } else {
+                $.messager.show({
+                    title: 'Error',
+                    msg: '文件不能为空，请重新选择文件！'
+                });
+            }
+        }
+    });
 }

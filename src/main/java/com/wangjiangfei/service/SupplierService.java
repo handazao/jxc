@@ -20,4 +20,6 @@ public interface SupplierService {
     ServiceVO save(Supplier supplier);
 
     ServiceVO delete(String ids);
+
+    Boolean existSupplier(String supplierName);
 }

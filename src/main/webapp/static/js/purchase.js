@@ -86,7 +86,7 @@ function openPurchaseListGoodsDialog(){
 		closed:false,
 		top:$(window).height()/6,
 		left:$(window).width()/4,
-		width: 900,
+		width: 1100,
 		height: 460,
 		onClose:function(){
 			$('#s_name').val('');
@@ -132,7 +132,7 @@ function openGoodsTypeAddDialog() {
 		iconCls: 'add',
 		closed: false,
 		top: $(window).height()/4,
-		width: 350,
+		width: 450,
 		height: 125,
 		onClose: function() {
 			$('#name').val('');
@@ -277,8 +277,8 @@ function openGoodsChooseDialog(){
 		title:'选择商品',
 		closed:false,
 		top:$(window).height()/4,
-		width: 500,
-		height: 265,
+		width: 600,
+		height: 350,
 		onClose:function(){
 			$('#price').val('');
 			$('#num').val('');
@@ -442,8 +442,8 @@ function openGoodsChooseModifyDialog(){
 		title:'修改商品',
 		closed:false,
 		top:$(window).height()/4,
-		width: 500,
-		height: 265,
+		width: 600,
+		height: 350,
 		onClose:function(){
 			$('#price').val('');
 			$('#num').val('');

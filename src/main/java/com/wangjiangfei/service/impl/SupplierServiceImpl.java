@@ -84,4 +84,9 @@ public class SupplierServiceImpl implements SupplierService {
         }
         return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS);
     }
+
+    @Override
+    public Boolean existSupplier(String supplierName) {
+        return supplierDao.getSupplierCount(supplierName) > 0 ? true : false;
+    }
 }

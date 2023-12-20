@@ -26,4 +26,5 @@ public interface SupplierDao {
 
     List<Supplier> getSupplierListByNameLike(@Param("q") String q);
 
+    Supplier existSupplier(@Param("supplierName") String supplierName);
 }

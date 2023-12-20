@@ -68,7 +68,7 @@ public class EasyPoiUtil {
                     continue;
                 }
                 //获得当前sheet的开始行
-                int firstRowNum = sheet.getFirstRowNum();
+                int firstRowNum = sheet.getFirstRowNum() + 2;
                 //获得当前sheet的结束行
                 int lastRowNum = sheet.getLastRowNum();
                 //循环除了第一行的所有行
@@ -81,8 +81,9 @@ public class EasyPoiUtil {
                     //获得当前行的开始列
                     int firstCellNum = row.getFirstCellNum();
                     //获得当前行的列数
-                    int lastCellNum = row.getPhysicalNumberOfCells();
-                    String[] cells = new String[row.getPhysicalNumberOfCells()];
+                    //int lastCellNum = row.getPhysicalNumberOfCells();
+                    int lastCellNum = row.getLastCellNum();
+                    String[] cells = new String[11];
                     //循环当前行
                     for (int cellNum = firstCellNum; cellNum < lastCellNum; cellNum++) {
                         Cell cell = row.getCell(cellNum);

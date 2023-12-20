@@ -108,4 +108,13 @@
         </where>
     </select>
 
+    <select id="existSupplier" resultMap="BaseResultMap">
+        SELECT * FROM t_supplier
+        <where>
+            <if test="supplierName != null and supplierName != ''">
+                supplier_name LIKE CONCAT('%', #{supplierName} ,'%')
+            </if>
+        </where>
+        limit 1
+    </select>
 </mapper>

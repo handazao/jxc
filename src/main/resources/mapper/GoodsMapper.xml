@@ -397,4 +397,11 @@
         t_goods.inventory_quantity &lt; t_goods.min_num
     </select>
 
+    <select id="findGoods" resultMap="BaseResultMap">
+        SELECT *
+        FROM t_goods
+        WHERE goods_code = #{goodsCode}
+          and goods_colour = #{goodsColour}
+    </select>
+
 </mapper>

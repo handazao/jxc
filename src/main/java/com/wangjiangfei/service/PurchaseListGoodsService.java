@@ -2,7 +2,9 @@ package com.wangjiangfei.service;
 
 import com.wangjiangfei.domain.ServiceVO;
 import com.wangjiangfei.entity.PurchaseList;
+import com.wangjiangfei.entity.PurchaseListGoods;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,11 +16,7 @@ public interface PurchaseListGoodsService {
 
     ServiceVO save(PurchaseList purchaseList, String purchaseListGoodsStr);
 
-    Map<String, Object> list(String purchaseNumber,
-                            Integer supplierId,
-                            Integer state,
-                            String sTime,
-                            String eTime);
+    Map<String, Object> list(String purchaseNumber, Integer supplierId, Integer state, String sTime, String eTime);
 
     Map<String, Object> goodsList(Integer purchaseListId);
 
@@ -26,5 +24,19 @@ public interface PurchaseListGoodsService {
 
     ServiceVO updateState(Integer purchaseListId);
 
-    String count(String sTime, String eTime ,Integer goodsTypeId, String codeOrName);
+    String count(String sTime, String eTime, Integer goodsTypeId, String codeOrName);
+
+    void savePurchaseListGoods(PurchaseListGoods purchaseListGoods);
+
+    void savePurchaseList(PurchaseList purchaseList);
+
+    void updatePurchaseListId(Integer purchaseListId, String purchaseNumber);
+
+    PurchaseList getByPurchaseNumber(String purchaseNumber);
+
+    void deletePurchaseListGoods(Integer purchaseListId);
+
+    void deletePurchaseList(Integer purchaseListId);
+
+    void importPurchase(Map<String, List<String[]>> stringListMap);
 }

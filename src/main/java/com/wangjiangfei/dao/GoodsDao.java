@@ -40,4 +40,13 @@ public interface GoodsDao {
 
     // 查询当前库存小于最小库存的商品
     List<Goods> getGoodsAlarm();
+
+    /**
+     * 根据商品编码和颜色查询商品
+     *
+     * @param goodsCode
+     * @param goodsColour
+     * @return
+     */
+    Goods findGoods(@Param("goodsCode") String goodsCode, @Param("goodsColour") String goodsColour);
 }

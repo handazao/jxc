@@ -11,13 +11,19 @@ import com.wangjiangfei.dao.UserDao;
 import com.wangjiangfei.domain.ServiceVO;
 import com.wangjiangfei.domain.SuccessCode;
 import com.wangjiangfei.entity.*;
+import com.wangjiangfei.service.GoodsService;
 import com.wangjiangfei.service.LogService;
 import com.wangjiangfei.service.PurchaseListGoodsService;
+import com.wangjiangfei.service.SupplierService;
 import com.wangjiangfei.util.BigDecimalUtil;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +46,11 @@ public class PurchaseListGoodsServiceImpl implements PurchaseListGoodsService {
     private GoodsDao goodsDao;
     @Autowired
     private GoodsTypeDao goodsTypeDao;
+    @Autowired
+    private SupplierService supplierService;
+    @Autowired
+    private GoodsService goodsService;
+
 
     @Override
     public ServiceVO save(PurchaseList purchaseList, String purchaseListGoodsStr) {
@@ -47,7 +58,8 @@ public class PurchaseListGoodsServiceImpl implements PurchaseListGoodsService {
         // 使用谷歌Gson将JSON字符串数组转换成具体的集合
         Gson gson = new Gson();
 
-        List<PurchaseListGoods> purchaseListGoodsList = gson.fromJson(purchaseListGoodsStr,new TypeToken<List<PurchaseListGoods>>(){}.getType());
+        List<PurchaseListGoods> purchaseListGoodsList = gson.fromJson(purchaseListGoodsStr, new TypeToken<List<PurchaseListGoods>>() {
+        }.getType());
 
         // 设置当前操作用户
         User currentUser = userDao.findUserByName((String) SecurityUtils.getSubject().getPrincipal());
@@ -70,7 +82,7 @@ public class PurchaseListGoodsServiceImpl implements PurchaseListGoodsService {
 
             goods.setInventoryQuantity(goods.getInventoryQuantity() + p.getGoodsNum());
 
-            goods.setPurchasingPrice(BigDecimalUtil.keepTwoDecimalPlaces((goods.getPurchasingPrice()+p.getPrice())/2));
+            goods.setPurchasingPrice(BigDecimalUtil.keepTwoDecimalPlaces((goods.getPurchasingPrice() + p.getPrice()) / 2));
 
             goods.setState(2);
 
@@ -78,14 +90,14 @@ public class PurchaseListGoodsServiceImpl implements PurchaseListGoodsService {
         }
 
         // 保存日志
-        logService.save(new Log(Log.INSERT_ACTION, "新增进货单："+purchaseList.getPurchaseNumber()));
+        logService.save(new Log(Log.INSERT_ACTION, "新增进货单：" + purchaseList.getPurchaseNumber()));
 
         return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS);
     }
 
     @Override
     public Map<String, Object> list(String purchaseNumber, Integer supplierId, Integer state, String sTime, String eTime) {
-        Map<String,Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
 
 
         List<PurchaseList> purchaseListList = purchaseListGoodsDao.getPurchaselist(purchaseNumber, supplierId, state, sTime, eTime);
@@ -113,7 +125,7 @@ public class PurchaseListGoodsServiceImpl implements PurchaseListGoodsService {
     @Override
     public ServiceVO delete(Integer purchaseListId) {
 
-        logService.save(new Log(Log.DELETE_ACTION, "删除进货单："+purchaseListGoodsDao.getPurchaseListById(purchaseListId).getPurchaseNumber()));
+        logService.save(new Log(Log.DELETE_ACTION, "删除进货单：" + purchaseListGoodsDao.getPurchaseListById(purchaseListId).getPurchaseNumber()));
 
         purchaseListGoodsDao.deletePurchaseListGoodsByPurchaseListId(purchaseListId);
 
@@ -124,9 +136,9 @@ public class PurchaseListGoodsServiceImpl implements PurchaseListGoodsService {
 
     @Override
     public ServiceVO updateState(Integer purchaseListId) {
-        purchaseListGoodsDao.updateState( purchaseListId);
+        purchaseListGoodsDao.updateState(purchaseListId);
 
-        logService.save(new Log(Log.DELETE_ACTION, "支付结算进货单："+purchaseListGoodsDao.getPurchaseListById(purchaseListId).getPurchaseNumber()));
+        logService.save(new Log(Log.DELETE_ACTION, "支付结算进货单：" + purchaseListGoodsDao.getPurchaseListById(purchaseListId).getPurchaseNumber()));
 
         return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS);
     }
@@ -140,12 +152,12 @@ public class PurchaseListGoodsServiceImpl implements PurchaseListGoodsService {
 
             List<PurchaseList> purchaseListList = purchaseListGoodsDao.getPurchaselist(null, null, null, sTime, eTime);
 
-            for(PurchaseList pl : purchaseListList){
+            for (PurchaseList pl : purchaseListList) {
 
                 List<PurchaseListGoods> purchaseListGoodsList = purchaseListGoodsDao
                         .getPurchaseListGoods(pl.getPurchaseListId(), goodsTypeId, codeOrName);
 
-                for(PurchaseListGoods pg : purchaseListGoodsList){
+                for (PurchaseListGoods pg : purchaseListGoodsList) {
 
                     JsonObject obj = new JsonObject();
 
@@ -185,5 +197,158 @@ public class PurchaseListGoodsServiceImpl implements PurchaseListGoodsService {
         }
 
         return result.toString();
+    }
+
+    @Override
+    public void savePurchaseListGoods(PurchaseListGoods purchaseListGoods) {
+        purchaseListGoodsDao.savePurchaseListGoods(purchaseListGoods);
+    }
+
+    @Override
+    public void savePurchaseList(PurchaseList purchaseList) {
+        if (purchaseList.getPurchaseListId() == null) {
+            purchaseListGoodsDao.savePurchaseList(purchaseList);
+        } else {
+            purchaseListGoodsDao.updatePurchaseList(purchaseList);
+        }
+    }
+
+    @Override
+    public void updatePurchaseListId(Integer purchaseListId, String purchaseNumber) {
+        purchaseListGoodsDao.updatePurchaseListId(purchaseListId, purchaseNumber);
+    }
+
+    @Override
+    public PurchaseList getByPurchaseNumber(String purchaseNumber) {
+        return purchaseListGoodsDao.getByPurchaseNumber(purchaseNumber);
+    }
+
+    @Override
+    public void deletePurchaseListGoods(Integer purchaseListId) {
+        purchaseListGoodsDao.deletePurchaseListGoodsByPurchaseListId(purchaseListId);
+    }
+
+    @Override
+    public void deletePurchaseList(Integer purchaseListId) {
+        purchaseListGoodsDao.deletePurchaseListById(purchaseListId);
+    }
+
+    @Transactional
+    @Override
+    public void importPurchase(Map<String, List<String[]>> stringListMap) {
+        for (Map.Entry<String, List<String[]>> entry : stringListMap.entrySet()) {
+            String sheetName = entry.getKey();
+            List<String[]> rows = entry.getValue();
+
+            Supplier existSupplier = supplierService.existSupplier(sheetName);
+            if (existSupplier == null || existSupplier.getSupplierId() == null) {
+                existSupplier = new Supplier();
+                existSupplier.setSupplierName(sheetName);
+                supplierService.save(existSupplier);
+            }
+
+            Map<String, PurchaseList> purchaseMap = new HashMap<>();
+            for (String[] row : rows) {
+                // 保存进货清单
+                double goodsPares = Integer.valueOf(row[6]) * Double.parseDouble(row[7]);
+                PurchaseList purchaseList = new PurchaseList();
+                if (purchaseMap.containsKey(row[0])) {
+                    purchaseList = purchaseMap.get(row[0]);
+                    purchaseList.setAmountPaid(goodsPares + purchaseList.getAmountPaid());
+                    purchaseList.setAmountPayable(goodsPares + purchaseList.getAmountPayable());
+                } else {
+                    try {
+                        SimpleDateFormat formatIn = new SimpleDateFormat("yyyy.M.d");
+                        SimpleDateFormat formatOut = new SimpleDateFormat("yyyy-MM-dd");
+                        String dateString = row[0];
+                        Date date = formatIn.parse(dateString);
+                        String purchaseDate = formatOut.format(date);
+                        Long timeDate = date.getTime();
+                        int timestamps = (int) (timeDate / 1000);
+                        purchaseList.setPurchaseNumber(String.valueOf(timestamps));
+                        purchaseList.setPurchaseDate(purchaseDate);
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+                    purchaseList.setAmountPaid(goodsPares);
+                    purchaseList.setAmountPayable(goodsPares);
+                    purchaseList.setSupplierId(existSupplier.getSupplierId());
+                    purchaseList.setUserId(1);
+                }
+
+                purchaseMap.put(row[0], purchaseList);
+
+                //保存商品
+                Goods goods = goodsService.findGoods(row[3], row[4]);
+                if (goods != null && goods.getGoodsId() != null) {
+                    PurchaseList purchase = purchaseListGoodsDao.getByPurchaseNumber(purchaseList.getPurchaseNumber());
+                    if (purchase != null && purchase.getPurchaseListId() != null) {
+                        Integer purchaseListId = purchaseList.getPurchaseListId();
+                        Integer goodsId = goods.getGoodsId();
+                        PurchaseListGoods purchaseListGoods = purchaseListGoodsDao.queryPurchaseListGoods(purchaseListId, goodsId);
+                        if (purchaseListGoods != null && purchaseListGoods.getPurchaseListGoodsId() != null) {
+                            goods.setLastPurchasingPrice(goods.getPurchasingPrice());
+                            goods.setInventoryQuantity(goods.getInventoryQuantity() + Integer.valueOf(row[6]) - purchaseListGoods.getGoodsNum());
+                        } else {
+                            goods.setLastPurchasingPrice(goods.getPurchasingPrice());
+                            goods.setInventoryQuantity(goods.getInventoryQuantity() + Integer.valueOf(row[6]));
+                        }
+                    } else {
+                        goods.setLastPurchasingPrice(goods.getPurchasingPrice());
+                        goods.setInventoryQuantity(goods.getInventoryQuantity() + Integer.valueOf(row[6]));
+                    }
+                } else {
+                    goods = new Goods();
+                    goods.setPurchasingPrice(Double.parseDouble(row[7]));
+                    goods.setLastPurchasingPrice(Double.parseDouble(row[7]));
+                    goods.setInventoryQuantity(Integer.valueOf(row[6]));
+                }
+                goods.setGoodsCode(row[3]);
+                goods.setGoodsName(row[2]);
+                goods.setMinNum(1);
+                goods.setGoodsModel(row[3]);
+                goods.setGoodsProducer(sheetName);
+                goods.setState(2);
+                goods.setGoodsUnit("1");
+                goods.setGoodsTypeId(2);
+                goods.setSeason(row[1]);
+                goods.setGoodsColour(row[4]);
+                goods.setGoodsSize(row[5]);
+                goods.setInPurchase(row[8]);
+                goods.setRetention(row[9]);
+                goods.setRemarks(row[10]);
+                goodsService.importSave(goods);
+
+
+                // 保存进货商品清单
+                PurchaseListGoods purchaseListGoods = new PurchaseListGoods();
+                purchaseListGoods.setGoodsId(goods.getGoodsId());
+                purchaseListGoods.setGoodsCode(goods.getGoodsCode());
+                purchaseListGoods.setGoodsName(goods.getGoodsName());
+                purchaseListGoods.setGoodsModel(goods.getGoodsModel());
+                purchaseListGoods.setGoodsUnit(goods.getGoodsUnit());
+                purchaseListGoods.setGoodsNum(Integer.valueOf(row[6]));
+                purchaseListGoods.setPrice(Double.parseDouble(row[7]));
+                purchaseListGoods.setTotal(goodsPares);
+                purchaseListGoods.setPurchaseListId(Integer.valueOf(purchaseList.getPurchaseNumber()));
+                purchaseListGoods.setGoodsTypeId(2);
+
+                purchaseListGoodsDao.savePurchaseListGoods(purchaseListGoods);
+
+            }
+
+            // 保存进货清单
+            for (Map.Entry<String, PurchaseList> purchaseListEntry : purchaseMap.entrySet()) {
+                PurchaseList purchaseList = purchaseListEntry.getValue();
+                PurchaseList purchase = purchaseListGoodsDao.getByPurchaseNumber(purchaseList.getPurchaseNumber());
+                if (purchase != null && purchase.getPurchaseListId() != null) {
+                    this.deletePurchaseList(purchase.getPurchaseListId());
+                    this.deletePurchaseListGoods(purchase.getPurchaseListId());
+                }
+                purchaseListGoodsDao.savePurchaseList(purchaseList);
+                purchaseListGoodsDao.updatePurchaseListId(purchaseList.getPurchaseListId(), purchaseList.getPurchaseNumber());
+            }
+
+        }
     }
 }

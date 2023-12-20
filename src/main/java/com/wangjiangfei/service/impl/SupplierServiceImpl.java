@@ -86,7 +86,7 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
-    public Boolean existSupplier(String supplierName) {
-        return supplierDao.getSupplierCount(supplierName) > 0 ? true : false;
+    public Supplier existSupplier(String supplierName) {
+        return supplierDao.existSupplier(supplierName);
     }
 }

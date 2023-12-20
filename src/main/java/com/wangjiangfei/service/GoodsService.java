@@ -31,4 +31,8 @@ public interface GoodsService {
     ServiceVO saveStock(Integer goodsId,Integer inventoryQuantity,double purchasingPrice);
 
     Map<String,Object> listAlarm();
+
+    Goods findGoods(String goodsCode, String goodsColour);
+
+    void importSave(Goods goods);
 }

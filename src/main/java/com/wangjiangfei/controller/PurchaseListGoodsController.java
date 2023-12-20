@@ -2,12 +2,9 @@ package com.wangjiangfei.controller;
 
 import com.wangjiangfei.domain.ErrorCode;
 import com.wangjiangfei.domain.ServiceVO;
-import com.wangjiangfei.entity.Goods;
+import com.wangjiangfei.domain.SuccessCode;
 import com.wangjiangfei.entity.PurchaseList;
-import com.wangjiangfei.entity.Supplier;
-import com.wangjiangfei.service.GoodsService;
 import com.wangjiangfei.service.PurchaseListGoodsService;
-import com.wangjiangfei.service.SupplierService;
 import com.wangjiangfei.util.EasyPoiUtil;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -32,10 +29,6 @@ public class PurchaseListGoodsController {
 
     @Autowired
     private PurchaseListGoodsService purchaseListGoodsService;
-    @Autowired
-    private SupplierService supplierService;
-    @Autowired
-    private GoodsService goodsService;
 
 
     /**
@@ -139,45 +132,7 @@ public class PurchaseListGoodsController {
             return new ServiceVO<>(ErrorCode.PARA_TYPE_ERROR_CODE, "文件格式错误");
         }
         Map<String, List<String[]>> stringListMap = EasyPoiUtil.readExcel(file);
-
-        for (Map.Entry<String, List<String[]>> entry : stringListMap.entrySet()) {
-            String sheetName = entry.getKey();
-            List<String[]> rows = entry.getValue();
-
-            boolean isExistSupplier = supplierService.existSupplier(sheetName);
-            if (!isExistSupplier) {
-                Supplier supplier = new Supplier();
-                supplier.setSupplierName(sheetName);
-                supplierService.save(supplier);
-            }
-
-
-            for (String[] row : rows) {
-                Goods goods = new Goods();
-                goods.setGoodsCode(row[3]);
-                goods.setGoodsName(row[2]);
-                goods.setInventoryQuantity(Integer.valueOf(row[6]));
-                goods.setMinNum(1);
-                goods.setGoodsModel(row[3]);
-                goods.setGoodsProducer(sheetName);
-                goods.setPurchasingPrice(Double.parseDouble(row[7]));
-                goods.setLastPurchasingPrice(Double.parseDouble(row[7]));
-                goods.setState(2);
-                goods.setGoodsUnit("1");
-                goods.setGoodsTypeId(2);
-                goods.setSeason(row[1]);
-                goods.setGoodsColour(row[4]);
-                goods.setGoodsSize(row[5]);
-                goods.setInPurchase(row[8]);
-                goods.setRetention(row[9]);
-                goods.setRemarks(row[10]);
-                //goodsService.save(goods);
-
-
-                //purchaseListGoodsService.save(purchaseList, purchaseListGoodsStr);
-            }
-        }
-
-        return null;
+        purchaseListGoodsService.importPurchase(stringListMap);
+        return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS);
     }
 }

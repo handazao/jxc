@@ -1,7 +1,6 @@
 package com.wangjiangfei.service.impl;
 
 import com.wangjiangfei.dao.GoodsDao;
-import com.wangjiangfei.dao.SaleListGoodsDao;
 import com.wangjiangfei.domain.ErrorCode;
 import com.wangjiangfei.domain.ServiceVO;
 import com.wangjiangfei.domain.SuccessCode;
@@ -37,7 +36,7 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public Map<String, Object> list(Integer page, Integer rows, String goodsName, Integer goodsTypeId) {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
 
         page = page == 0 ? 1 : page;
         int offSet = (page - 1) * rows;
@@ -56,7 +55,7 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public Map<String, Object> listInventory(Integer page, Integer rows, String codeOrName, Integer goodsTypeId) {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
 
         page = page == 0 ? 1 : page;
         int offSet = (page - 1) * rows;
@@ -83,7 +82,7 @@ public class GoodsServiceImpl implements GoodsService {
     public ServiceVO getCode() {
 
         // 获取当前商品最大编码
-        String code = goodsDao.getMaxCode() == null ?  "0" : goodsDao.getMaxCode();
+        String code = goodsDao.getMaxCode() == null ? "0" : goodsDao.getMaxCode();
 
         // 在现有编码上加1
         Integer intCode = Integer.parseInt(code) + 1;
@@ -91,9 +90,9 @@ public class GoodsServiceImpl implements GoodsService {
         // 将编码重新格式化为4位数字符串形式
         String unitCode = intCode.toString();
 
-        for(int i = 4;i > intCode.toString().length();i--){
+        for (int i = 4; i > intCode.toString().length(); i--) {
 
-            unitCode = "0"+unitCode;
+            unitCode = "0" + unitCode;
 
         }
         return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS, unitCode);
@@ -102,19 +101,19 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public ServiceVO save(Goods goods) {
 
-        if(goods.getGoodsId() == null){
+        if (goods.getGoodsId() == null) {
 
-            logService.save(new Log(Log.INSERT_ACTION,"添加商品:"+goods.getGoodsName()));
+            logService.save(new Log(Log.INSERT_ACTION, "添加商品:" + goods.getGoodsName()));
             // 设置上一次采购价为当前采购价
             goods.setLastPurchasingPrice(goods.getPurchasingPrice());
             goods.setInventoryQuantity(0);
             goods.setState(0);
             goodsDao.saveGoods(goods);
 
-        }else{
+        } else {
 
             goodsDao.updateGoods(goods);
-            logService.save(new Log(Log.UPDATE_ACTION,"修改商品:"+goods.getGoodsName()));
+            logService.save(new Log(Log.UPDATE_ACTION, "修改商品:" + goods.getGoodsName()));
 
         }
 
@@ -137,7 +136,7 @@ public class GoodsServiceImpl implements GoodsService {
 
         } else {
 
-            logService.save(new Log(Log.DELETE_ACTION,"删除商品:"+goods.getGoodsName()));
+            logService.save(new Log(Log.DELETE_ACTION, "删除商品:" + goods.getGoodsName()));
 
             goodsDao.deleteGoods(goodsId);
 
@@ -148,7 +147,7 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public Map<String, Object> getNoInventoryQuantity(Integer page, Integer rows, String nameOrCode) {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
 
         page = page == 0 ? 1 : page;
         int offSet = (page - 1) * rows;
@@ -166,7 +165,7 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public Map<String, Object> getHasInventoryQuantity(Integer page, Integer rows, String nameOrCode) {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
 
         page = page == 0 ? 1 : page;
         int offSet = (page - 1) * rows;
@@ -195,7 +194,7 @@ public class GoodsServiceImpl implements GoodsService {
 
         goodsDao.updateGoods(goods);
 
-        logService.save(new Log(Log.UPDATE_ACTION,goods.getGoodsName()+"商品期初入库"));
+        logService.save(new Log(Log.UPDATE_ACTION, goods.getGoodsName() + "商品期初入库"));
 
         return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS);
     }
@@ -213,14 +212,14 @@ public class GoodsServiceImpl implements GoodsService {
         goods.setInventoryQuantity(0);
         goodsDao.updateGoods(goods);
 
-        logService.save(new Log(Log.UPDATE_ACTION,goods.getGoodsName()+"商品清除库存"));
+        logService.save(new Log(Log.UPDATE_ACTION, goods.getGoodsName() + "商品清除库存"));
 
         return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS);
     }
 
     @Override
     public Map<String, Object> listAlarm() {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
 
         List<Goods> goodsList = goodsDao.getGoodsAlarm();
 
@@ -229,5 +228,21 @@ public class GoodsServiceImpl implements GoodsService {
         logService.save(new Log(Log.SELECT_ACTION, "查询库存报警商品信息"));
 
         return map;
+    }
+
+    @Override
+    public Goods findGoods(String goodsCode, String goodsColour) {
+        return goodsDao.findGoods(goodsCode, goodsColour);
+    }
+
+    @Override
+    public void importSave(Goods goods) {
+        if (goods.getGoodsId() == null) {
+            goodsDao.saveGoods(goods);
+            logService.save(new Log(Log.INSERT_ACTION, "添加商品:" + goods.getGoodsName() + ";商品id:" + String.valueOf(goods.getGoodsId())));
+        } else {
+            goodsDao.updateGoods(goods);
+            logService.save(new Log(Log.UPDATE_ACTION, "修改商品:" + goods.getGoodsName() + ";商品id:" + String.valueOf(goods.getGoodsId())));
+        }
     }
 }

@@ -30,8 +30,8 @@ $(function(){
 				title:'选择商品',
 				closed:false,
 				top:$(window).height()/4,
-				width: 500,
-				height: 265,
+				width: 600,
+				height: 350,
 				onClose:function(){
 					$('#price').val('');
 					$('#num').val('');
@@ -132,8 +132,8 @@ function openGoodsTypeAddDialog() {
 		iconCls: 'add',
 		closed: false,
 		top: $(window).height()/4,
-		width: 450,
-		height: 125,
+		width: 550,
+		height: 150,
 		onClose: function() {
 			$('#name').val('');
 		}
@@ -591,9 +591,8 @@ function uploadonline() {
 
         },
         success: function(result){
-            var result = eval('('+result+')');
-
-            if (result.success){
+			var resultObj = eval('(' + result + ')');
+			if (resultObj.code === 100) {
                 $('#uploadonlineinfo').window('close');
                 $('#dg2').datagrid('reload');
                 $.messager.show({

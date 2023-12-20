@@ -149,6 +149,43 @@
         WHERE purchase_list_id = #{purchaseListId}
     </update>
 
+    <update id="updatePurchaseListId">
+        update t_purchase_list_goods
+        set purchase_list_id = #{purchaseListId}
+        where purchase_list_id = #{purchaseNumber}
+    </update>
+
+    <update id="updatePurchaseList">
+        UPDATE t_purchase_list
+        <set>
+            <if test="purchaseNumber != null">
+                purchase_number = #{purchaseNumber},
+            </if>
+            <if test="amountPaid != null">
+                amount_paid = #{amountPaid},
+            </if>
+            <if test="amountPayable != null">
+                amount_payable = #{amountPayable},
+            </if>
+            <if test="purchaseDate != null">
+                purchase_date = #{purchaseDate},
+            </if>
+            <if test="remarks != null">
+                remarks = #{remarks},
+            </if>
+            <if test="state != null">
+                state = #{state},
+            </if>
+            <if test="supplierId != null">
+                supplier_id = #{supplierId},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+        </set>
+        WHERE purchase_list_id = #{purchaseListId}
+    </update>
+
     <select id="getPurchaseListGoods" resultMap="BaseResultMap02">
         SELECT
             t_purchase_list_goods.purchase_list_goods_id,
@@ -185,6 +222,19 @@
                 )
             </if>
         </where>
+    </select>
+
+    <select id="getByPurchaseNumber" resultMap="BaseResultMap">
+        SELECT *
+        FROM t_purchase_list
+        WHERE purchase_number = #{purchaseNumber}
+    </select>
+
+    <select id="queryPurchaseListGoods" resultMap="BaseResultMap02">
+        SELECT *
+        FROM t_purchase_list_goods
+        WHERE purchase_list_id = #{purchaseListId}
+          and goods_id = #{goodsId}
     </select>
 
 </mapper>

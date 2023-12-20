@@ -21,5 +21,5 @@ public interface SupplierService {
 
     ServiceVO delete(String ids);
 
-    Boolean existSupplier(String supplierName);
+    Supplier existSupplier(String supplierName);
 }

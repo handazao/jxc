@@ -283,7 +283,7 @@ public class PurchaseListGoodsServiceImpl implements PurchaseListGoodsService {
                 if (goods != null && goods.getGoodsId() != null) {
                     PurchaseList purchase = purchaseListGoodsDao.getByPurchaseNumber(purchaseList.getPurchaseNumber());
                     if (purchase != null && purchase.getPurchaseListId() != null) {
-                        Integer purchaseListId = purchaseList.getPurchaseListId();
+                        Integer purchaseListId = purchase.getPurchaseListId();
                         Integer goodsId = goods.getGoodsId();
                         PurchaseListGoods purchaseListGoods = purchaseListGoodsDao.queryPurchaseListGoods(purchaseListId, goodsId);
                         if (purchaseListGoods != null && purchaseListGoods.getPurchaseListGoodsId() != null) {

@@ -32,6 +32,9 @@
         <result column="total" property="total" jdbcType="DECIMAL" />
         <result column="purchase_list_id" property="purchaseListId" jdbcType="INTEGER" />
         <result column="goods_type_id" property="goodsTypeId" jdbcType="INTEGER" />
+        <result column="season" property="season" jdbcType="VARCHAR"/>
+        <result column="goods_colour" property="goodsColour" jdbcType="VARCHAR"/>
+        <result column="goods_size" property="goodsSize" jdbcType="VARCHAR"/>
     </resultMap>
 
     <insert id="savePurchaseList" useGeneratedKeys="true" keyProperty="purchaseListId" parameterType="com.wangjiangfei.entity.PurchaseList">
@@ -117,9 +120,13 @@
             t_purchase_list_goods.price,
             t_purchase_list_goods.total,
             t_purchase_list_goods.purchase_list_id,
-            t_purchase_list_goods.goods_type_id
+            t_purchase_list_goods.goods_type_id,
+            t_goods.goods_colour,
+            t_goods.goods_size,
+            t_goods.season
         FROM
             t_purchase_list_goods
+                LEFT JOIN t_goods ON t_goods.goods_id = t_purchase_list_goods.goods_id
         WHERE
             purchase_list_id = #{purchaseListId}
     </select>

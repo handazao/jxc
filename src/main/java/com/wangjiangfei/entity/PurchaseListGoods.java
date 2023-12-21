@@ -17,4 +17,7 @@ public class PurchaseListGoods {
   private Integer purchaseListId;
   private Integer goodsTypeId;
 
+  private String season;
+  private String goodsColour;
+  private String goodsSize;
 }

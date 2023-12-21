@@ -2,23 +2,18 @@
  * 页面加载完毕后执行
  */
 $(document).ready(function() {
-	  // 粒子背景特效
-	  $('body').particleground({
-	    dotColor: '#5cbdaa',
-	    lineColor: '#5cbdaa'
-	  });
-	  
-	  // 绑定登录按钮事件
+
+	// 绑定登录按钮事件
 	  $('#loginBtn').click(login);
-	  
-	  // 绑定登录回车事件
+
+	// 绑定登录回车事件
 	  $('body').keydown(function(event){
 		  if(event.keyCode === 13){
 			  login();
 		  }
 	  });
-	  
-	  // 这里的代码用于解决当系统Session超时iframe的内嵌窗口不能正常的跳回到登录页面，而是将登录页直接嵌套在了iframe里
+
+	// 这里的代码用于解决当系统Session超时iframe的内嵌窗口不能正常的跳回到登录页面，而是将登录页直接嵌套在了iframe里
 	  // 所以我们需要找到该iframe的父窗口来进行加载
 	  if(window.parent !== window){// window.parent:如果不存在父窗口，那么该值默认为当前窗口对象
 		  window.parent.location.reload(true);
@@ -69,7 +64,8 @@ function login() {
 					  modelRole(roleInput);
 				  }
 			  }else{
-				  modelMsg(result.msg);
+				  console.log(result.msg)
+				  //modelMsg(result.msg);
 			  }
 		  }
 	  });

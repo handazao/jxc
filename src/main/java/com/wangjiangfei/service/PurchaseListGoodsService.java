@@ -16,7 +16,7 @@ public interface PurchaseListGoodsService {
 
     ServiceVO save(PurchaseList purchaseList, String purchaseListGoodsStr);
 
-    Map<String, Object> list(String purchaseNumber, Integer supplierId, Integer state, String sTime, String eTime);
+    Map<String, Object> list(String purchaseNumber, Integer supplierId, Integer state, String sTime, String eTime, List<String> purchaseNumberList, Integer type);
 
     Map<String, Object> goodsList(Integer purchaseListId);
 
@@ -38,5 +38,5 @@ public interface PurchaseListGoodsService {
 
     void deletePurchaseList(Integer purchaseListId);
 
-    void importPurchase(Map<String, List<String[]>> stringListMap);
+    List<String> importPurchase(Map<String, List<String[]>> stringListMap);
 }

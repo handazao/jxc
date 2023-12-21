@@ -6,6 +6,7 @@ import com.wangjiangfei.domain.SuccessCode;
 import com.wangjiangfei.entity.PurchaseList;
 import com.wangjiangfei.service.PurchaseListGoodsService;
 import com.wangjiangfei.util.EasyPoiUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -57,8 +59,13 @@ public class PurchaseListGoodsController {
     @RequestMapping("/list")
     @RequiresPermissions(value = {"进货单据查询", "供应商统计"}, logical = Logical.OR)
     public Map<String, Object> list(String purchaseNumber, Integer supplierId, Integer state, String sTime,
-                                    String eTime) {
-        return purchaseListGoodsService.list(purchaseNumber, supplierId, state, sTime, eTime);
+                                    String eTime, String purchaseNumbers, Integer type) {
+        if (StringUtils.isNotBlank(purchaseNumbers)) {
+            String[] purchaseNumbersArray = purchaseNumbers.split(",");
+            List<String> purchaseNumberList = Arrays.asList(purchaseNumbersArray);
+            return purchaseListGoodsService.list(purchaseNumber, supplierId, state, sTime, eTime, purchaseNumberList, type);
+        }
+        return purchaseListGoodsService.list(purchaseNumber, supplierId, state, sTime, eTime, null, null);
     }
 
     /**
@@ -121,6 +128,7 @@ public class PurchaseListGoodsController {
      * @throws Exception
      */
     @RequestMapping("/importPurchase")
+    @RequiresPermissions(value = "批量入库")
     public ServiceVO importPurchase(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws Exception {
         if (file.isEmpty()) {
             redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
@@ -132,7 +140,7 @@ public class PurchaseListGoodsController {
             return new ServiceVO<>(ErrorCode.PARA_TYPE_ERROR_CODE, "文件格式错误");
         }
         Map<String, List<String[]>> stringListMap = EasyPoiUtil.readExcel(file);
-        purchaseListGoodsService.importPurchase(stringListMap);
-        return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS);
+        List<String> purchaseLists = purchaseListGoodsService.importPurchase(stringListMap);
+        return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS, purchaseLists);
     }
 }

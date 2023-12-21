@@ -576,35 +576,3 @@ function savePurchaseData() {
 		}
 	});
 }
-
-/**
-* 保存并新增进货清单
-*/
- function uploadidalogonline() {
-    $('#uploadonlineinfo').window('open').dialog('setTitle','文件上传');
-
-}
-function uploadonline() {
-    $('#fam').form('submit',{
-        url: "/purchaseListGoods/importPurchase",
-        onSubmit: function(){
-
-        },
-        success: function(result){
-			var resultObj = eval('(' + result + ')');
-			if (resultObj.code === 100) {
-                $('#uploadonlineinfo').window('close');
-                $('#dg2').datagrid('reload');
-                $.messager.show({
-                    title: 'Success',
-                    msg: '上传成功'
-                });
-            } else {
-                $.messager.show({
-                    title: 'Error',
-                    msg: '文件不能为空，请重新选择文件！'
-                });
-            }
-        }
-    });
-}

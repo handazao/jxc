@@ -27,6 +27,8 @@ public class Log {
 
   public static final String DELETE_ACTION = "删除操作";
 
+  public static final String IMPORT_ACTION = "导入操作";
+
   public Log(String logType, String content) {
       this.logType = logType;
       this.content = content;

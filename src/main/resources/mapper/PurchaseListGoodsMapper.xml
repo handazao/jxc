@@ -15,6 +15,7 @@
         <result column="state" property="state" jdbcType="INTEGER" />
         <result column="supplier_id" property="supplierId" jdbcType="INTEGER" />
         <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="type" property="type" jdbcType="INTEGER"/>
         <result column="supplier_name" property="supplierName" jdbcType="VARCHAR" />
         <result column="true_name" property="trueName" jdbcType="VARCHAR" />
     </resultMap>
@@ -37,12 +38,12 @@
         INSERT INTO t_purchase_list
         (
         purchase_number, amount_paid, amount_payable, purchase_date,
-        remarks, state, supplier_id, user_id
+        remarks, state, supplier_id, user_id, type
         )
         VALUES
         (
         #{purchaseNumber}, #{amountPaid}, #{amountPayable}, #{purchaseDate},
-        #{remarks}, #{state}, #{supplierId}, #{userId}
+        #{remarks}, #{state}, #{supplierId}, #{userId}, #{type}
         )
     </insert>
 
@@ -91,6 +92,15 @@
             </if>
             <if test="eTime != null and eTime != ''">
                 AND t_purchase_list.purchase_date &lt;= #{eTime}
+            </if>
+            <if test="purchaseNumberList != null and purchaseNumberList.size() != 0">
+                AND t_purchase_list.purchase_number in
+                <foreach collection="purchaseNumberList" item="purchaseNumber" open="(" separator="," close=")">
+                    #{purchaseNumber}
+                </foreach>
+            </if>
+            <if test="type != null">
+                AND t_purchase_list.type = #{type}
             </if>
         </where>
     </select>

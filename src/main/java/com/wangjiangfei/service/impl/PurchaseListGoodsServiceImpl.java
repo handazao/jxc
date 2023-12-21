@@ -16,6 +16,7 @@ import com.wangjiangfei.service.LogService;
 import com.wangjiangfei.service.PurchaseListGoodsService;
 import com.wangjiangfei.service.SupplierService;
 import com.wangjiangfei.util.BigDecimalUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,16 +24,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author wangjiangfei
  * @date 2019/8/2 9:15
  * @description
  */
+@Slf4j
 @Service
 public class PurchaseListGoodsServiceImpl implements PurchaseListGoodsService {
 
@@ -96,11 +95,11 @@ public class PurchaseListGoodsServiceImpl implements PurchaseListGoodsService {
     }
 
     @Override
-    public Map<String, Object> list(String purchaseNumber, Integer supplierId, Integer state, String sTime, String eTime) {
+    public Map<String, Object> list(String purchaseNumber, Integer supplierId, Integer state, String sTime, String eTime, List<String> purchaseNumberList, Integer type) {
         Map<String, Object> result = new HashMap<>();
 
 
-        List<PurchaseList> purchaseListList = purchaseListGoodsDao.getPurchaselist(purchaseNumber, supplierId, state, sTime, eTime);
+        List<PurchaseList> purchaseListList = purchaseListGoodsDao.getPurchaselist(purchaseNumber, supplierId, state, sTime, eTime, purchaseNumberList, type);
 
         logService.save(new Log(Log.SELECT_ACTION, "进货单据查询"));
 
@@ -150,7 +149,7 @@ public class PurchaseListGoodsServiceImpl implements PurchaseListGoodsService {
 
         try {
 
-            List<PurchaseList> purchaseListList = purchaseListGoodsDao.getPurchaselist(null, null, null, sTime, eTime);
+            List<PurchaseList> purchaseListList = purchaseListGoodsDao.getPurchaselist(null, null, null, sTime, eTime, null, null);
 
             for (PurchaseList pl : purchaseListList) {
 
@@ -235,11 +234,14 @@ public class PurchaseListGoodsServiceImpl implements PurchaseListGoodsService {
 
     @Transactional
     @Override
-    public void importPurchase(Map<String, List<String[]>> stringListMap) {
+    public List<String> importPurchase(Map<String, List<String[]>> stringListMap) {
+        List<String> purchaseLists = new ArrayList<>();
+        logService.save(new Log(Log.IMPORT_ACTION, "导入开始"));
+        log.info("--------------------导入开始------------------------");
         for (Map.Entry<String, List<String[]>> entry : stringListMap.entrySet()) {
             String sheetName = entry.getKey();
             List<String[]> rows = entry.getValue();
-
+            log.info("导入名称:{}", sheetName);
             Supplier existSupplier = supplierService.existSupplier(sheetName);
             if (existSupplier == null || existSupplier.getSupplierId() == null) {
                 existSupplier = new Supplier();
@@ -345,10 +347,16 @@ public class PurchaseListGoodsServiceImpl implements PurchaseListGoodsService {
                     this.deletePurchaseList(purchase.getPurchaseListId());
                     this.deletePurchaseListGoods(purchase.getPurchaseListId());
                 }
+                purchaseList.setState(1);
+                purchaseList.setType(1);
                 purchaseListGoodsDao.savePurchaseList(purchaseList);
                 purchaseListGoodsDao.updatePurchaseListId(purchaseList.getPurchaseListId(), purchaseList.getPurchaseNumber());
+                log.info("进货单名称:{}", purchaseList.getPurchaseListId());
+                purchaseLists.add(purchaseList.getPurchaseNumber());
             }
 
         }
+        log.info("--------------------导入结束------------------------");
+        return purchaseLists;
     }
 }

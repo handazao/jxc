@@ -21,7 +21,9 @@ public interface PurchaseListGoodsDao {
                                        @Param("supplierId") Integer supplierId,
                                        @Param("state") Integer state,
                                        @Param("sTime") String sTime,
-                                       @Param("eTime") String eTime);
+                                       @Param("eTime") String eTime,
+                                       @Param("purchaseNumberList") List<String> purchaseNumberList,
+                                       @Param("type") Integer type);
 
     List<PurchaseListGoods> getPurchaseListGoodsByPurchaseListId(Integer purchaseListId);
 

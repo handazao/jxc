@@ -49,4 +49,6 @@ public interface GoodsDao {
      * @return
      */
     Goods findGoods(@Param("goodsCode") String goodsCode, @Param("goodsColour") String goodsColour);
+
+    List<Goods> queryGoodsList();
 }

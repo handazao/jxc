@@ -267,9 +267,5 @@ public class EasyPoiUtil {
         wb.write(out);
         wb.close();
     }
-//    private void newCell(XSSFRow roww,int index,String value){
-//        XSSFCell cell = roww.createCell(index);
-//        cell.setCellType(CellType.STRING);
-//        cell.setCellValue(Strings.isNullOrEmpty(value) ? "" : value);
-//    }
+
 }

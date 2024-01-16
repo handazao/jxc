@@ -245,4 +245,9 @@ public class GoodsServiceImpl implements GoodsService {
             logService.save(new Log(Log.UPDATE_ACTION, "修改商品:" + goods.getGoodsName() + ";商品id:" + String.valueOf(goods.getGoodsId())));
         }
     }
+
+    @Override
+    public List<Goods> queryGoodsList() {
+        return goodsDao.queryGoodsList();
+    }
 }

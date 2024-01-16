@@ -404,4 +404,10 @@
           and goods_colour = #{goodsColour}
     </select>
 
+    <select id="queryGoodsList" resultMap="BaseResultMap">
+        SELECT *
+        FROM t_goods
+        WHERE inventory_quantity > 0
+    </select>
+
 </mapper>

@@ -3,6 +3,7 @@ package com.wangjiangfei.service;
 import com.wangjiangfei.domain.ServiceVO;
 import com.wangjiangfei.entity.Goods;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,4 +36,6 @@ public interface GoodsService {
     Goods findGoods(String goodsCode, String goodsColour);
 
     void importSave(Goods goods);
+
+    List<Goods> queryGoodsList();
 }

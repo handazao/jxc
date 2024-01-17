@@ -17,5 +17,5 @@ public interface TakeStockService extends IService<TakeStock> {
 
     boolean save(TakeStock takeStock);
 
-    List<String> importTakeStock(Map<String, List<String[]>> stringListMap);
+    List<String> importTakeStock(Map<String, List<String[]>> stringListMap, String id);
 }

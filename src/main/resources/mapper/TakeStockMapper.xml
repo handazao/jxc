@@ -6,13 +6,13 @@
 <mapper namespace="com.wangjiangfei.dao.TakeStockDao">
 
     <resultMap id="BaseResultMap" type="com.wangjiangfei.entity.TakeStock">
-        <result column="id" property="id" jdbcType="INTEGER"/>
-        <result column="number" property="number" jdbcType="VARCHAR"/>
-        <result column="inventory_quantity" property="inventoryQuantity" jdbcType="INTEGER"/>
-        <result column="purchase_price" property="purchasePrice" jdbcType="DECIMAL"/>
-        <result column="count_quantity" property="countQuantity" jdbcType="INTEGER"/>
-        <result column="surplus_quantity" property="surplusQuantity" jdbcType="INTEGER"/>
-        <result column="surplus_amount" property="surplusAmount" jdbcType="DECIMAL"/>
+        <result column="id" property="id"/>
+        <result column="number" property="number"/>
+        <result column="inventory_quantity" property="inventoryQuantity"/>
+        <result column="purchase_price" property="purchasePrice"/>
+        <result column="count_quantity" property="countQuantity"/>
+        <result column="surplus_quantity" property="surplusQuantity"/>
+        <result column="surplus_amount" property="surplusAmount"/>
         <result column="inventory_time" property="inventoryTime"/>
         <result column="inventory_variance" property="inventoryVariance"/>
         <result column="status" property="status"/>
@@ -36,9 +36,6 @@
             <if test="takeStock.status != null and takeStock.status != ''">
                 AND status = #{takeStock.status}
             </if>
-            <if test="takeStock.number != null and takeStock.number != ''">
-                AND number LIKE CONCAT('%', #{takeStock.number} ,'%')
-            </if>
         </where>
         LIMIT #{offSet}, #{pageRow}
     </select>
@@ -55,9 +52,6 @@
             </if>
             <if test="takeStock.status != null and takeStock.status != ''">
                 AND status = #{takeStock.status}
-            </if>
-            <if test="takeStock.number != null and takeStock.number != ''">
-                AND number LIKE CONCAT('%', #{takeStock.number} ,'%')
             </if>
         </where>
     </select>

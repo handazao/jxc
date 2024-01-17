@@ -1,6 +1,7 @@
 package com.wangjiangfei.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wangjiangfei.dao.TakeStockDao;
 import com.wangjiangfei.entity.*;
@@ -70,6 +71,9 @@ public class TakeStockServiceImpl extends ServiceImpl<TakeStockDao, TakeStock> i
                 takeStockList.setGoodsId(goods.getGoodsId());
                 takeStockList.setInventoryQuantity(goods.getInventoryQuantity());
                 takeStockList.setPurchasePrice(goods.getPurchasingPrice());
+                takeStockList.setSeason(goods.getSeason());
+                takeStockList.setGoodsColour(goods.getGoodsColour());
+                takeStockList.setGoodsSize(goods.getGoodsSize());
                 takeStockListServide.save(takeStockList);
             }
             String userName = (String) SecurityUtils.getSubject().getPrincipal();
@@ -87,32 +91,74 @@ public class TakeStockServiceImpl extends ServiceImpl<TakeStockDao, TakeStock> i
     }
 
     @Override
-    public List<String> importTakeStock(Map<String, List<String[]>> stringListMap) {
+    public List<String> importTakeStock(Map<String, List<String[]>> stringListMap, String id) {
         List<String> purchaseLists = new ArrayList<>();
         logService.save(new Log(Log.IMPORT_ACTION, "库存盘点导入开始"));
         log.info("--------------------库存盘点导入开始------------------------");
         for (Map.Entry<String, List<String[]>> entry : stringListMap.entrySet()) {
-            int inventoryQuantitySum = 0;
-            BigDecimal purchasePriceSum = BigDecimal.ZERO;
-
+            int countQuantityNum = 0;
+            BigDecimal surplusAmountNum = BigDecimal.ZERO;
             String sheetName = entry.getKey();
             List<String[]> rows = entry.getValue();
             log.info("导入名称:{}", sheetName);
             Map<String, PurchaseList> purchaseMap = new HashMap<>();
             for (String[] row : rows) {
+                if (row[0].equals("商品编号")) {
+                    continue;
+                }
+                Goods goods = goodsService.getById(Integer.valueOf(row[0]));
+                if (goods == null || goods.getGoodsId() == null) {
+                    goods = goodsService.findGoods(row[1], row[4]);
+                }
+                if (goods == null || goods.getGoodsId() == null) {
+                    log.error("导入失败,商品不存在,商品编码:{},商品颜色:{}", row[1], row[4]);
+                    logService.save(new Log(Log.IMPORT_ACTION, "导入失败,商品不存在,商品编码:" + row[1] + ",商品颜色:" + row[4]));
+                    continue;
+                }
 
-                /*inventoryQuantitySum += goods.getInventoryQuantity();
-                BigDecimal purchasePrice = BigDecimal.valueOf(goods.getPurchasingPrice()).multiply(BigDecimal.valueOf(goods.getInventoryQuantity()));
-                purchasePriceSum = purchasePriceSum.add(purchasePrice);
-                TakeStockList takeStockList = new TakeStockList();
-                takeStockList.setTakeStockId(takeStock.getId());
-                takeStockList.setGoodsCode(goods.getGoodsCode());
-                takeStockList.setGoodsName(goods.getGoodsName());
+                QueryWrapper<TakeStockList> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("take_stock_id", id);
+                queryWrapper.eq("goods_id", goods.getGoodsId());
+                queryWrapper.eq("is_deleted", 0);
+                TakeStockList takeStockList = takeStockListServide.getOne(queryWrapper);
+                if (takeStockList == null) {
+                    takeStockList = new TakeStockList();
+                }
+                takeStockList.setTakeStockId(id);
                 takeStockList.setGoodsId(goods.getGoodsId());
-                takeStockList.setInventoryQuantity(goods.getInventoryQuantity());
-                takeStockList.setPurchasePrice(goods.getPurchasingPrice());
-                takeStockListServide.save(takeStockList);*/
+                takeStockList.setCountQuantity(Integer.valueOf(row[7]));
+                takeStockList.setSurplusQuantity(Integer.valueOf(row[7]) - goods.getInventoryQuantity());
+                takeStockList.setSurplusAmount(goods.getPurchasingPrice() * takeStockList.getCountQuantity());
+                takeStockList.setInventoryTime(new Date());
+                if (takeStockList.getSurplusQuantity() > 0) {
+                    takeStockList.setInventoryVariance(1);
+                } else if (takeStockList.getSurplusQuantity() < 0) {
+                    takeStockList.setInventoryVariance(-1);
+                } else if (takeStockList.getSurplusQuantity() == 0) {
+                    takeStockList.setInventoryVariance(0);
+                }
+                takeStockList.setRemarks(row[8]);
+                takeStockListServide.saveOrUpdate(takeStockList);
+
+                //盘点表
+                countQuantityNum += Integer.valueOf(row[7]);
+                surplusAmountNum = surplusAmountNum.add(new BigDecimal(takeStockList.getSurplusAmount()));
             }
+            TakeStock takeStock = takeStockDao.selectById(id);
+            int sq = countQuantityNum - takeStock.getInventoryQuantity();
+            if (sq > 0) {
+                takeStock.setInventoryVariance(1);
+            } else if (sq < 0) {
+                takeStock.setInventoryVariance(-1);
+            } else if (sq == 0) {
+                takeStock.setInventoryVariance(0);
+            }
+            takeStock.setStatus(1);
+            takeStock.setInventoryTime(new Date());
+            takeStock.setCountQuantity(countQuantityNum);
+            takeStock.setSurplusQuantity(sq);
+            takeStock.setSurplusAmount(surplusAmountNum.doubleValue());
+            takeStockDao.updateById(takeStock);
         }
         log.info("--------------------导入结束------------------------");
         return purchaseLists;

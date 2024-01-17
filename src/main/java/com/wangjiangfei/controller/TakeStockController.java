@@ -72,6 +72,20 @@ public class TakeStockController {
     }
 
     /**
+     * 添加或修改库存盘点信息
+     *
+     * @param takeStock
+     * @return
+     */
+    @RequestMapping("/update")
+    @ResponseBody
+    @RequiresPermissions(value = "库存盘点")
+    public ServiceVO update(TakeStock takeStock) {
+        //takeStockService.update(takeStock);
+        return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS);
+    }
+
+    /**
      * 删除库存盘点信息
      *
      * @param id
@@ -80,10 +94,11 @@ public class TakeStockController {
     @RequestMapping("/delete")
     @ResponseBody
     @RequiresPermissions(value = "库存盘点")
-    public ServiceVO delete(Integer id) {
+    public ServiceVO delete(String id) {
         TakeStock takeStock = takeStockService.getById(id);
         takeStock.setIsDeleted(1);
         takeStockService.updateById(takeStock);
+        takeStockListService.deleteByTakeStockId(id);
         return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS);
     }
 
@@ -97,7 +112,7 @@ public class TakeStockController {
      */
     @RequestMapping("/importTakeStock")
     @RequiresPermissions(value = "库存盘点")
-    public ServiceVO importTakeStock(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws Exception {
+    public ServiceVO importTakeStock(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes, TakeStock takeStock) throws Exception {
         if (file.isEmpty()) {
             redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
             return new ServiceVO<>(ErrorCode.PARA_TYPE_ERROR_CODE, "请上传文件");
@@ -108,12 +123,12 @@ public class TakeStockController {
             return new ServiceVO<>(ErrorCode.PARA_TYPE_ERROR_CODE, "文件格式错误");
         }
         Map<String, List<String[]>> stringListMap = EasyPoiUtil.readExcel(file);
-        List<String> purchaseLists = takeStockService.importTakeStock(stringListMap);
+        List<String> purchaseLists = takeStockService.importTakeStock(stringListMap, takeStock.getId());
         return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS, purchaseLists);
     }
 
     /**
-     * 库存盘点导入
+     * 库存盘点下载
      *
      * @param response
      * @param takeStock

@@ -1,109 +1,22 @@
-/**
- * 根据供应商名模糊查询供应商信息
- */
 function searchTakeStock() {
 
 	$('#dg').datagrid('load', {
-		takeStockName: $('#number').val()
+        number: $('#number').val()
 	});
 }
 
 var url;
 
-/**
- * 打开新增供应商窗口
- */
-function openTakeStockAddDialog() {
-	$('#dlg').dialog({
-		title: '添加供应商',
-		iconCls: 'add',
-		closed: false,
-		top: $(window).height() / 4,
-		width: 500,
-		height: 350,
-		onClose: function () {
-			$('#name').val('');
-			$('#contacts').val('');
-			$('#phoneNumber').val('');
-			$('#address').val('');
-			$('#remarks').val('');
-		}
-	});
-
-	url = "/takeStock/save";
-}
-
-/**
- * 打开修改供应商窗口
- */
-function openTakeStockModifyDialog() {
-	var selections = $('#dg').datagrid('getSelections');
-	if (selections.length < 1) {
-		$.messager.alert({
-			title: '系统提示',
-			msg: '请选择一条您要修改的记录',
-			icon: 'error',
-			top: $(window).height() / 4
-		});
-		return;
-	}
-	//加载数据至表单
-	$('#fm').form('load', selections[0]);
-	//设置窗口相关属性，并打开
-	$('#dlg').dialog({
-		title: '修改供应商',
-		iconCls: 'update',
-		closed: false,
-		top: $(window).height() / 4,
-		width: 500,
-		height: 350,
-		onClose: function () {
-			$('#name').val('');
-			$('#contacts').val('');
-			$('#phoneNumber').val('');
-			$('#address').val('');
-			$('#remarks').val('');
-		}
-	});
-
-	url = "/takeStock/save?takeStockId=" + selections[0].takeStockId;
-}
-
-/**
- * 关闭窗口
- */
-function closeDlg() {
-	$('#name').val('');
-	$('#contacts').val('');
-	$('#phoneNumber').val('');
-	$('#address').val('');
-	$('#remarks').val('');
-	$('#dlg').dialog('close');
-}
-
 $(function () {
 	//数据表格加载完毕后，绑定双击打开修改窗口事件
-	$('#dg').datagrid({
-		onDblClickRow: function (index, row) {
-			//加载数据至表单
-			$('#fm').form('load', row);
-			$('#dlg').dialog({
-				title: '修改供应商',
-				iconCls: 'update',
-				closed: false,
-				top: $(window).height() / 4,
-				width: 500,
-				height: 350,
-				onClose: function () {
-					$('#name').val('');
-					$('#contacts').val('');
-					$('#phoneNumber').val('');
-					$('#address').val('');
-					$('#remarks').val('');
+    $('#dg').datagrid({
+        onClickRow: function (index, row) {
+            $('#dg2').datagrid({
+                url: '/takeStockList/list',
+                queryParams: {
+                    takeStockId: row.id
 				}
 			});
-
-			url = "/takeStock/save?takeStockId=" + row.takeStockId;
 		}
 	})
 });
@@ -163,7 +76,7 @@ function deleteTakeStock() {
 			if (r) {
 				var idsAr = [];
 				for (var i = 0; i < selections.length; i++) {
-					idsAr.push(selections[i].takeStockId);
+                    idsAr.push(selections[i].id);
 				}
 				var ids = idsAr.join(",");
 				$.ajax({
@@ -171,7 +84,7 @@ function deleteTakeStock() {
 					dataType: 'json',
 					type: 'post',
 					data: {
-						'ids': ids
+                        'id': ids
 					},
 					success: function (result) {
 						if (result.code === 100) {
@@ -195,4 +108,149 @@ function deleteTakeStock() {
 			}
 		}
 	})
+}
+
+
+/**
+ * 下载
+ */
+function download() {
+    var selections = $('#dg').datagrid('getSelections');
+    if (selections.length < 1) {
+        $.messager.alert({
+            title: '系统提示',
+            msg: '请选择您要下载的记录',
+            icon: 'info',
+            top: $(window).height() / 4
+        });
+        return;
+    }
+    $.messager.confirm({
+        title: '系统提示',
+        msg: '您确定要下载这' + selections.length + '条盘点记录吗？',
+        top: $(window).height() / 4,
+        fn: function (r) {
+            if (r) {
+                var idsAr = [];
+                for (var i = 0; i < selections.length; i++) {
+                    idsAr.push(selections[i].id);
+                }
+                var ids = idsAr.join(",");
+                window.location.href = '/takeStock/exportTakeStock?id=' + ids + '';
+            }
+        }
+    })
+}
+
+
+/**
+ * 导入
+ */
+function imports() {
+    var selections = $('#dg').datagrid('getSelections');
+    if (selections.length < 1) {
+        $.messager.alert({
+            title: '系统提示',
+            msg: '请选择您要导入的记录',
+            icon: 'error',
+            top: $(window).height() / 4
+        });
+        return;
+    }
+    $('#uploadonlineinfo').window('open').dialog('setTitle', '文件上传');
+}
+
+
+function uploadonline() {
+    var selections = $('#dg').datagrid('getSelections');
+    var idsAr = [];
+    for (var i = 0; i < selections.length; i++) {
+        idsAr.push(selections[i].id);
+    }
+    var ids = idsAr.join(",");
+    $('#fam').form('submit', {
+        url: "/takeStock/importTakeStock?id=" + ids + "",
+        onSubmit: function () {
+
+        },
+        success: function (result) {
+            var resultObj = eval('(' + result + ')');
+            if (resultObj.code === 100) {
+                let purchaseLists = resultObj.info.join(',');
+                $('#uploadonlineinfo').window('close');
+                $('#dg').datagrid('reload');
+                $('#dg').datagrid({
+                    url: '/takeStock/list'
+                });
+                $.messager.show({
+                    title: 'Success',
+                    msg: '上传成功'
+                });
+            } else {
+                $.messager.show({
+                    title: 'Error',
+                    msg: '文件不能为空，请重新选择文件！'
+                });
+            }
+        }
+    });
+}
+
+
+/**
+ * 打开修改供应商窗口
+ */
+function update() {
+    var selections = $('#dg').datagrid('getSelections');
+    if (selections.length < 1) {
+        $.messager.alert({
+            title: '系统提示',
+            msg: '请选择一条您要修改的记录',
+            icon: 'error',
+            top: $(window).height() / 4
+        });
+        return;
+    }
+    //加载数据至表单
+    $('#fm').form('load', selections[0]);
+    //设置窗口相关属性，并打开
+    $('#dlg').dialog({
+        title: '修改盘点信息',
+        iconCls: 'update',
+        closed: false,
+        top: $(window).height() / 4,
+        width: 500,
+        height: 350,
+        onClose: function () {
+            $('#name').val('');
+            $('#contacts').val('');
+            $('#phoneNumber').val('');
+            $('#address').val('');
+            $('#remarks').val('');
+        }
+    });
+
+    url = "/takeStock/update?id=" + selections[0].supplierId;
+}
+
+function ivFmt(value, row) {
+    if (value > 0) {
+        return '盘盈';
+    } else if (value < 0) {
+        return '盘亏';
+    } else {
+        return '无变化';
+    }
+}
+
+function statusFmt(value, row) {
+    if (value > 0) {
+        return '已盘点';
+    } else {
+        return '未盘点';
+    }
+}
+
+function priceFmt(value, row) {
+    return '￥' + value;
 }

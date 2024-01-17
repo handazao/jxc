@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wangjiangfei.dao.TakeStockListDao">
+
+    <resultMap id="BaseResultMap" type="com.wangjiangfei.entity.TakeStockList">
+        <result column="id" property="id"/>
+        <result column="take_stock_id" property="takeStockId"/>
+        <result column="goods_id" property="goodsId"/>
+        <result column="goods_code" property="goodsCode"/>
+        <result column="goods_name" property="goodsName"/>
+        <result column="season" property="season"/>
+        <result column="goods_colour" property="goodsColour"/>
+        <result column="goods_size" property="goodsSize"/>
+        <result column="inventory_quantity" property="inventoryQuantity"/>
+        <result column="count_quantity" property="countQuantity"/>
+        <result column="purchase_price" property="purchasePrice"/>
+        <result column="surplus_quantity" property="surplusQuantity"/>
+        <result column="surplus_amount" property="surplusAmount"/>
+        <result column="inventory_time" property="inventoryTime"/>
+        <result column="inventory_variance" property="inventoryVariance"/>
+        <result column="remarks" property="remarks"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <select id="getTakeStockLists" resultMap="BaseResultMap">
+        SELECT * FROM t_take_stock_list
+        <where>
+            is_deleted = 0
+            <if test="takeStockList.takeStockId != null and takeStockList.takeStockId != ''">
+                AND take_stock_id = #{takeStockList.takeStockId}
+            </if>
+        </where>
+        LIMIT #{offSet}, #{rows}
+    </select>
+
+    <select id="getTakeStockListCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM t_take_stock_list
+        <where>
+            is_deleted = 0
+            <if test="takeStockList.takeStockId != null and takeStockList.takeStockId != ''">
+                AND take_stock_id = #{takeStockList.takeStockId}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

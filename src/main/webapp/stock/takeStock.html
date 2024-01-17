@@ -5,68 +5,75 @@
     <title>库存盘点</title>
     <link rel="stylesheet" type="text/css" href="../static/easyui/themes/default/easyui.css"/>
     <link rel="stylesheet" type="text/css" href="../static/easyui/themes/icon.css"/>
-    <link rel="stylesheet" type="text/css" href="../static/css/supplier.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/saleSearch.css"/>
     <script type="text/javascript" src="../static/easyui/jquery.min.js"></script>
     <script type="text/javascript" src="../static/easyui/jquery.easyui.min.js"></script>
     <script type="text/javascript" src="../static/easyui/locale/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript" src="../static/js/takeStock.js"></script>
 </head>
-<body>
-<table id="dg" class="easyui-datagrid" fit="true" fitColumns="true" pagination="true" rownumbers="true"
-       singleSelect="flase" url="/takeStock/list" pageList="[30,40,50]" pageSize="30" toolbar="#tb" striped="true"
-       title="库存盘点">
-    <thead>
-    <tr>
-        <th field="number" width="50" align="center">盘点编号</th>
-        <th field="inventoryQuantity" width="50" align="center">库存数量</th>
-        <th field="purchasePrice" width="50" align="center">库存价格</th>
-        <th field="countQuantity" width="50" align="center">盘点数量</th>
-        <th field="surplusAmount" width="100" align="center">盘点价格</th>
-        <th field="inventoryTime" width="150" align="center">盘点时间</th>
-        <th field="inventoryVariance" width="150" align="center">盘点差异</th>
-        <th field="status" width="150" align="center">状态</th>
-    </tr>
-    </thead>
-</table>
+<body class="easyui-layout">
+<div region="north" class="northCls">
+    <table id="dg" class="easyui-datagrid" fit="true" fitColumns="true" pagination="true" rownumbers="true"
+           singleSelect="true" url="/takeStock/list" pageList="[10,20,30]" pageSize="10" toolbar="#tb" striped="true"
+           title="库存盘点">
+        <thead>
+        <tr>
+            <th field="number" width="100" align="center">盘点编号</th>
+            <th field="inventoryQuantity" width="100" align="center">库存数量</th>
+            <th field="purchasePrice" width="100" align="center">库存价格</th>
+            <th field="countQuantity" width="100" align="center">盘点数量</th>
+            <th field="surplusAmount" width="100" align="center">盘点价格</th>
+            <th field="inventoryTime" width="100" align="center">盘点时间</th>
+            <th field="inventoryVariance" width="100" align="center" formatter="ivFmt">盘点差异</th>
+            <th field="status" width="100" align="center" formatter="statusFmt">状态</th>
+        </tr>
+        </thead>
+    </table>
+</div>
 
 <div id="tb">
     <div>
         <a href="javascript:saveData()" class="easyui-linkbutton" iconCls="save">盘点</a>
+        <a href="javascript:download()" class="easyui-linkbutton" iconCls="add" plain="true">下载</a>
+        <a href="javascript:imports()" class="easyui-linkbutton" iconCls="add" plain="true">导入</a>
+        <a href="javascript:update()" class="easyui-linkbutton" iconCls="update" plain="true">修改</a>
+        <a href="javascript:deleteTakeStock()" class="easyui-linkbutton" iconCls="delete" plain="true">删除</a>
         &nbsp;盘点编号：&nbsp;<input type="text" id="number" onkeydown="if(event.keyCode === 13) searchTakeStock()"/>
         <a href="javascript:searchTakeStock()" class="easyui-linkbutton" iconCls="search" plain="true">搜索</a>
     </div>
 </div>
 
-<div id="dlg" class="easyui-dialog" closed="true" buttons="#dlgTb">
-    <form method="post" id="fm">
-        <table cellspacing="8px">
-            <tr>
-                <td>供应商名称:</td>
-                <td><input id="name" name="supplierName" type="text"/></td>
-            </tr>
-            <tr>
-                <td>供应商联系人:</td>
-                <td><input id="contacts" name="contacts" type="text"/></td>
-            </tr>
-            <tr>
-                <td>联系人电话:</td>
-                <td><input id="phoneNumber" name="phoneNumber" type="text"/></td>
-            </tr>
-            <tr>
-                <td>供应商地址:</td>
-                <td><input id="address" name="address" type="text"/></td>
-            </tr>
-            <tr>
-                <td valign="top">备注:</td>
-                <td><textarea id="remarks" name="remarks" rows="5" cols="40"></textarea></td>
-            </tr>
-        </table>
-    </form>
+<div region="center" class="centerCls">
+    <table id="dg2" class="easyui-datagrid" fit="true" fitColumns="true" pagination="true" rownumbers="true"
+           singleSelect="true" pageList="[10,20,30]" pageSize="10" striped="true">
+        <thead>
+        <tr>
+            <th field="goodsId" width="100" align="center">商品编号</th>
+            <th field="goodsCode" width="100" align="center">商品编码</th>
+            <th field="goodsName" width="100" align="center">商品名称</th>
+            <th field="season" width="40" align="center">季节</th>
+            <th field="goodsColour" width="40" align="center">商品颜色</th>
+            <th field="goodsSize" width="40" align="center">商品尺码</th>
+            <th field="inventoryQuantity" width="80" align="center">库存数量</th>
+            <th field="countQuantity" width="80" align="center">盘点数量</th>
+            <th field="purchasePrice" width="50" align="center" formatter="priceFmt">价格</th>
+            <th field="surplusQuantity" width="80" align="center">盘盈数量</th>
+            <th field="surplusAmount" width="80" align="center">盘盈金额</th>
+            <th field="inventoryTime" width="100" align="center">盘点时间</th>
+            <th field="inventoryVariance" width="50" align="center" formatter="ivFmt">盘点差异</th>
+        </tr>
+        </thead>
+    </table>
 </div>
 
-<div id="dlgTb">
-    <a href="javascript:saveData()" class="easyui-linkbutton" iconCls="save">保存</a>
-    <a href="javascript:closeDlg()" class="easyui-linkbutton" iconCls="closed">关闭</a>
+<div id="uploadonlineinfo" class="easyui-window" style="width:500px;padding:10px 40px" closed="true">
+    <form id="fam" method="post" enctype="multipart/form-data">
+        <input class="easyui-filebox" name="file" data-options="prompt:'文件上传'" style="width:100%"/>
+    </form>
+    <div data-options="region:'south',border:false" style="text-align:center;padding:5px 0 0;">
+        <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" href="javascript:void(0)"
+           onclick="uploadonline();" style="width:80px">上传</a>
+    </div>
 </div>
 </body>
 </html>

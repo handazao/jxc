@@ -1,10 +1,15 @@
 package com.wangjiangfei.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
+@TableName("t_goods")
 public class Goods {
 
+  @TableId
   private Integer goodsId;
   private String goodsCode;
   private String goodsName;
@@ -20,8 +25,9 @@ public class Goods {
   private String goodsUnit;
   private Integer goodsTypeId;
 
+  @TableField(exist = false)
   private String goodsTypeName;
-
+  @TableField(exist = false)
   private Integer saleTotal;// 销售总量
 
   private String season;

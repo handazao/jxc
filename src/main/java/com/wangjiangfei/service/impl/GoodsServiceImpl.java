@@ -1,5 +1,6 @@
 package com.wangjiangfei.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wangjiangfei.dao.GoodsDao;
 import com.wangjiangfei.domain.ErrorCode;
 import com.wangjiangfei.domain.ServiceVO;
@@ -10,6 +11,7 @@ import com.wangjiangfei.service.CustomerReturnListGoodsService;
 import com.wangjiangfei.service.GoodsService;
 import com.wangjiangfei.service.LogService;
 import com.wangjiangfei.service.SaleListGoodsService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +25,8 @@ import java.util.Map;
  * @description
  */
 @Service
-public class GoodsServiceImpl implements GoodsService {
+@Slf4j
+public class GoodsServiceImpl extends ServiceImpl<GoodsDao, Goods> implements GoodsService {
 
     @Autowired
     private LogService logService;
@@ -99,7 +102,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
-    public ServiceVO save(Goods goods) {
+    public boolean save(Goods goods) {
 
         if (goods.getGoodsId() == null) {
 
@@ -116,9 +119,7 @@ public class GoodsServiceImpl implements GoodsService {
             logService.save(new Log(Log.UPDATE_ACTION, "修改商品:" + goods.getGoodsName()));
 
         }
-
-        return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS);
-
+        return true;
     }
 
     @Override

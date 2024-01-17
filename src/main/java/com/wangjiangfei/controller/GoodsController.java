@@ -1,6 +1,7 @@
 package com.wangjiangfei.controller;
 
 import com.wangjiangfei.domain.ServiceVO;
+import com.wangjiangfei.domain.SuccessCode;
 import com.wangjiangfei.entity.Goods;
 import com.wangjiangfei.service.GoodsService;
 import org.apache.shiro.authz.annotation.Logical;
@@ -71,7 +72,8 @@ public class GoodsController {
     @ResponseBody
     @RequiresPermissions(value = "商品管理")
     public ServiceVO save(Goods goods) {
-        return goodsService.save(goods);
+        boolean isOk = goodsService.save(goods);
+        return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS);
     }
 
     /**

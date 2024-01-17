@@ -14,6 +14,9 @@ public class TakeStockList {
     private Integer goodsId;
     private String goodsCode;
     private String goodsName;
+    private String season;
+    private String goodsColour;
+    private String goodsSize;
     private Integer inventoryQuantity;
     private Integer countQuantity;
     private double purchasePrice;
@@ -22,6 +25,7 @@ public class TakeStockList {
     private Date inventoryTime;
     private Integer inventoryVariance;
     private Integer isDeleted;
+    private String remarks;
     private String createBy;
     private String updateBy;
     private Date createTime;

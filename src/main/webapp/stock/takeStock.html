@@ -5,7 +5,7 @@
     <title>库存盘点</title>
     <link rel="stylesheet" type="text/css" href="../static/easyui/themes/default/easyui.css"/>
     <link rel="stylesheet" type="text/css" href="../static/easyui/themes/icon.css"/>
-    <link rel="stylesheet" type="text/css" href="../static/css/saleSearch.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/takeStock.css"/>
     <script type="text/javascript" src="../static/easyui/jquery.min.js"></script>
     <script type="text/javascript" src="../static/easyui/jquery.easyui.min.js"></script>
     <script type="text/javascript" src="../static/easyui/locale/easyui-lang-zh_CN.js"></script>
@@ -36,7 +36,6 @@
         <a href="javascript:saveData()" class="easyui-linkbutton" iconCls="save">盘点</a>
         <a href="javascript:download()" class="easyui-linkbutton" iconCls="add" plain="true">下载</a>
         <a href="javascript:imports()" class="easyui-linkbutton" iconCls="add" plain="true">导入</a>
-        <a href="javascript:update()" class="easyui-linkbutton" iconCls="update" plain="true">修改</a>
         <a href="javascript:deleteTakeStock()" class="easyui-linkbutton" iconCls="delete" plain="true">删除</a>
         &nbsp;盘点编号：&nbsp;<input type="text" id="number" onkeydown="if(event.keyCode === 13) searchTakeStock()"/>
         <a href="javascript:searchTakeStock()" class="easyui-linkbutton" iconCls="search" plain="true">搜索</a>
@@ -64,6 +63,39 @@
         </tr>
         </thead>
     </table>
+</div>
+
+<div id="dlg" class="easyui-dialog" closed="true" buttons="#dlgTb">
+    <form method="post" id="fm">
+        <input type="hidden" id="id" name="id"/>
+        <table cellspacing="8px">
+            <tr>
+                <td>商品编码:</td>
+                <td><input id="goodsCode" name="goodsCode" readonly="readonly" type="text"/></td>
+            </tr>
+            <tr>
+                <td>商品名称:</td>
+                <td><input id="goodsName" name="goodsName" readonly="readonly" type="text"/></td>
+            </tr>
+            <tr>
+                <td>库存数量:</td>
+                <td><input id="inventoryQuantity" name="inventoryQuantity" readonly="readonly" type="text"/></td>
+            </tr>
+            <tr>
+                <td>盘点数量:</td>
+                <td><input id="countQuantity" name="countQuantity" type="text"/></td>
+            </tr>
+            <tr>
+                <td valign="top">备注:</td>
+                <td><textarea id="remarks" name="remarks" rows="5" cols="40"></textarea></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<div id="dlgTb">
+    <a href="javascript:saveTakeStockList()" class="easyui-linkbutton" iconCls="save">保存</a>
+    <a href="javascript:closeTakeStockList()" class="easyui-linkbutton" iconCls="closed">关闭</a>
 </div>
 
 <div id="uploadonlineinfo" class="easyui-window" style="width:500px;padding:10px 40px" closed="true">

@@ -49,7 +49,7 @@ public class TakeStockListController {
     @ResponseBody
     @RequiresPermissions(value = "库存盘点")
     public ServiceVO save(TakeStockList takeStockList) {
-        takeStockListService.saveOrUpdate(takeStockList);
+        takeStockListService.updateTakeStockList(takeStockList);
         return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS);
     }
 }

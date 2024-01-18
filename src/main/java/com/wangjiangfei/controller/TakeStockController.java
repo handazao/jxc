@@ -72,20 +72,6 @@ public class TakeStockController {
     }
 
     /**
-     * 添加或修改库存盘点信息
-     *
-     * @param takeStock
-     * @return
-     */
-    @RequestMapping("/update")
-    @ResponseBody
-    @RequiresPermissions(value = "库存盘点")
-    public ServiceVO update(TakeStock takeStock) {
-        //takeStockService.update(takeStock);
-        return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS);
-    }
-
-    /**
      * 删除库存盘点信息
      *
      * @param id
@@ -95,7 +81,8 @@ public class TakeStockController {
     @ResponseBody
     @RequiresPermissions(value = "库存盘点")
     public ServiceVO delete(String id) {
-        TakeStock takeStock = takeStockService.getById(id);
+        TakeStock takeStock = new TakeStock();
+        takeStock.setId(id);
         takeStock.setIsDeleted(1);
         takeStockService.updateById(takeStock);
         takeStockListService.deleteByTakeStockId(id);

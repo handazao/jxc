@@ -19,28 +19,31 @@ $(function () {
 			});
 		}
 	})
+
+    $('#dg2').datagrid({
+        onDblClickRow: function (index, row) {
+            update();
+        }
+    })
 });
 
 /**
  * 保存供应商信息
  */
 function saveData() {
-	$('#fm').form('submit', {
+    $.ajax({
 		url: "/takeStock/save",
-		onSubmit: function () {
-			//表单验证
-			return true;
-		},
+        dataType: 'json',
+        type: 'post',
 		success: function (result) {
-			var resultJson = eval('(' + result + ')');
-			if (resultJson.code === 100) {
+            console.log(result);
+            if (result.code === 100) {
 				$.messager.alert({
 					title: '系统提示',
 					msg: '保存成功',
 					icon: 'info',
 					top: $(window).height() / 4
 				});
-				$('#dlg').dialog('close');
 				$('#dg').datagrid('reload');
 			} else {
 				$.messager.alert({
@@ -182,14 +185,18 @@ function uploadonline() {
                 $('#dg').datagrid({
                     url: '/takeStock/list'
                 });
-                $.messager.show({
-                    title: 'Success',
-                    msg: '上传成功'
+                $.messager.alert({
+                    title: '系统提示',
+                    msg: '上传成功',
+                    icon: 'info',
+                    top: $(window).height() / 4
                 });
             } else {
-                $.messager.show({
-                    title: 'Error',
-                    msg: '文件不能为空，请重新选择文件！'
+                $.messager.alert({
+                    title: '系统提示',
+                    msg: '文件不能为空，请重新选择文件！',
+                    icon: 'error',
+                    top: $(window).height() / 4
                 });
             }
         }
@@ -201,7 +208,7 @@ function uploadonline() {
  * 打开修改供应商窗口
  */
 function update() {
-    var selections = $('#dg').datagrid('getSelections');
+    var selections = $('#dg2').datagrid('getSelections');
     if (selections.length < 1) {
         $.messager.alert({
             title: '系统提示',
@@ -220,17 +227,59 @@ function update() {
         closed: false,
         top: $(window).height() / 4,
         width: 500,
-        height: 350,
+        height: 450,
         onClose: function () {
-            $('#name').val('');
-            $('#contacts').val('');
-            $('#phoneNumber').val('');
-            $('#address').val('');
+            $('#countQuantity').val('');
             $('#remarks').val('');
         }
     });
 
-    url = "/takeStock/update?id=" + selections[0].supplierId;
+    url = "/takeStockList/save";
+}
+
+function saveTakeStockList() {
+    $('#fm').form('submit', {
+        url: url,
+        onSubmit: function () {
+            if ($('#countQuantity').val() === null || $('#countQuantity').val() === '') {
+                $.messager.alert({
+                    title: '系统提示',
+                    msg: '请输入盘点数量',
+                    icon: 'error',
+                    top: $(window).height() / 4
+                });
+
+                return false;
+            }
+            return true;
+        },
+        success: function (result) {
+            var resultObj = eval('(' + result + ')');
+            if (resultObj.code === 100) {
+                $.messager.alert({
+                    title: '系统提示',
+                    msg: '保存成功',
+                    icon: 'info',
+                    top: $(window).height() / 4
+                });
+                $('#dlg').dialog('close');
+                $('#dg2').datagrid('reload');
+            } else {
+                $.messager.alert({
+                    title: '系统提示',
+                    msg: resultObj.msg,
+                    icon: 'error',
+                    top: $(window).height() / 4
+                });
+            }
+        }
+    })
+}
+
+function closeTakeStockList() {
+    $('#countQuantity').val('');
+    $('#remarks').val('');
+    $('#dlg').dialog('close');
 }
 
 function ivFmt(value, row) {

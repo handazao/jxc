@@ -3,12 +3,10 @@ package com.wangjiangfei.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.gson.Gson;
 import com.wangjiangfei.dao.TakeStockDao;
 import com.wangjiangfei.entity.*;
-import com.wangjiangfei.service.GoodsService;
-import com.wangjiangfei.service.LogService;
-import com.wangjiangfei.service.TakeStockListService;
-import com.wangjiangfei.service.TakeStockService;
+import com.wangjiangfei.service.*;
 import com.wangjiangfei.util.UUIDUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -16,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -32,6 +31,10 @@ public class TakeStockServiceImpl extends ServiceImpl<TakeStockDao, TakeStock> i
     private GoodsService goodsService;
     @Autowired
     private TakeStockListService takeStockListServide;
+    @Autowired
+    private OverflowListGoodsService overflowListGoodsService;
+    @Autowired
+    private DamageListGoodsService damageListGoodsService;
 
     @Override
     public Map<String, Object> list(Integer page, Integer rows, TakeStock takeStock) {
@@ -78,7 +81,7 @@ public class TakeStockServiceImpl extends ServiceImpl<TakeStockDao, TakeStock> i
             }
             String userName = (String) SecurityUtils.getSubject().getPrincipal();
             //当前日期
-            String today = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
+            String today = new SimpleDateFormat("yyyyMMdd").format(new Date());
             takeStock.setNumber("PD" + today);
             takeStock.setInventoryQuantity(inventoryQuantitySum);
             takeStock.setPurchasePrice(purchasePriceSum.doubleValue());
@@ -132,8 +135,61 @@ public class TakeStockServiceImpl extends ServiceImpl<TakeStockDao, TakeStock> i
                 takeStockList.setInventoryTime(new Date());
                 if (takeStockList.getSurplusQuantity() > 0) {
                     takeStockList.setInventoryVariance(1);
+                    //盘盈商品
+                    String today = new SimpleDateFormat("yyyyMMdd").format(new Date());
+                    OverflowList overflowList = new OverflowList();
+                    overflowList.setOverflowNumber("PY" + today);
+                    overflowList.setOverflowDate(today);
+                    overflowList.setRemarks("盘盈商品");
+
+                    OverflowListGoods overflowListGoods = new OverflowListGoods();
+                    overflowListGoods.setGoodsId(takeStockList.getGoodsId());
+                    overflowListGoods.setGoodsCode(takeStockList.getGoodsCode());
+                    overflowListGoods.setGoodsName(takeStockList.getGoodsName());
+                    overflowListGoods.setGoodsColour(takeStockList.getGoodsColour());
+                    overflowListGoods.setSeason(takeStockList.getSeason());
+                    overflowListGoods.setGoodsSize(takeStockList.getGoodsSize());
+                    overflowListGoods.setGoodsUnit(goods.getGoodsUnit());
+                    overflowListGoods.setGoodsNum(takeStockList.getSurplusQuantity());
+                    overflowListGoods.setPrice(takeStockList.getPurchasePrice());
+                    overflowListGoods.setTotal(takeStockList.getPurchasePrice() * takeStockList.getSurplusQuantity());
+                    overflowListGoods.setOverflowListId(overflowList.getOverflowListId());
+                    overflowListGoods.setGoodsTypeId(goods.getGoodsTypeId());
+                    List<OverflowListGoods> overflowListGoodsList = new ArrayList<>();
+                    overflowListGoodsList.add(overflowListGoods);
+                    Gson gson = new Gson();
+
+                    overflowListGoodsService.save(overflowList, gson.toJson(overflowListGoodsList));
+                    purchaseLists.add(goods.getGoodsCode());
+
                 } else if (takeStockList.getSurplusQuantity() < 0) {
                     takeStockList.setInventoryVariance(-1);
+                    //盘亏商品
+                    String today = new SimpleDateFormat("yyyyMMdd").format(new Date());
+                    DamageList damageList = new DamageList();
+                    damageList.setDamageNumber("PK" + today);
+                    damageList.setDamageDate(today);
+                    damageList.setRemarks("盘亏商品");
+
+                    DamageListGoods damageListGoods = new DamageListGoods();
+                    damageListGoods.setGoodsId(takeStockList.getGoodsId());
+                    damageListGoods.setGoodsCode(takeStockList.getGoodsCode());
+                    damageListGoods.setGoodsName(takeStockList.getGoodsName());
+                    damageListGoods.setGoodsColour(takeStockList.getGoodsColour());
+                    damageListGoods.setSeason(takeStockList.getSeason());
+                    damageListGoods.setGoodsSize(takeStockList.getGoodsSize());
+                    damageListGoods.setGoodsUnit(goods.getGoodsUnit());
+                    damageListGoods.setGoodsNum(takeStockList.getSurplusQuantity());
+                    damageListGoods.setPrice(takeStockList.getPurchasePrice());
+                    damageListGoods.setTotal(takeStockList.getPurchasePrice() * takeStockList.getSurplusQuantity());
+                    damageListGoods.setDamageListGoodsId(damageList.getDamageListId());
+                    damageListGoods.setGoodsTypeId(goods.getGoodsTypeId());
+                    List<DamageListGoods> damageListGoodsList = new ArrayList<>();
+                    damageListGoodsList.add(damageListGoods);
+                    Gson gson = new Gson();
+
+                    damageListGoodsService.save(damageList, gson.toJson(damageListGoodsList));
+                    purchaseLists.add(goods.getGoodsCode());
                 } else if (takeStockList.getSurplusQuantity() == 0) {
                     takeStockList.setInventoryVariance(0);
                 }

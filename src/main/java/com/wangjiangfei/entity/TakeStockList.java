@@ -1,7 +1,11 @@
 package com.wangjiangfei.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -9,6 +13,7 @@ import java.util.Date;
 @TableName("t_take_stock_list")
 public class TakeStockList {
 
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private String takeStockId;
     private Integer goodsId;
@@ -22,6 +27,8 @@ public class TakeStockList {
     private double purchasePrice;
     private Integer surplusQuantity;
     private double surplusAmount;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date inventoryTime;
     private Integer inventoryVariance;
     private Integer isDeleted;

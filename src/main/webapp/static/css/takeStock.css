@@ -1,0 +1,54 @@
+@CHARSET "UTF-8";
+body {
+	margin: 1px !important;
+}
+
+
+fieldset {
+	border-color: #E7F0FF
+}
+
+.northCls {
+	height: 400px;
+	border: 0;
+}
+
+.centerCls {
+	margin-top: 5px;
+	border: 0;
+}
+
+#fm {
+	padding: 10px 20px 10px 20px;
+}
+
+#goodsCode {
+	width: 280px;
+	border-radius: 4px 4px 4px 4px;
+}
+
+#goodsName {
+	width: 280px;
+	border-radius: 4px 4px 4px 4px;
+}
+
+#inventoryQuantity {
+	width: 280px;
+	border-radius: 4px 4px 4px 4px;
+}
+
+#countQuantity {
+	width: 280px;
+	border-radius: 4px 4px 4px 4px;
+}
+
+#remarks {
+	resize: none;
+	width: 280px;
+	border-radius: 4px 4px 4px 4px;
+	font-family: "微软雅黑";
+	border-width: 2px;
+	border-style: inset;
+	border-color: initial;
+	border-image: initial;
+}

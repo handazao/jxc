@@ -9,6 +9,9 @@ public class DamageListGoods {
   private Integer goodsId;
   private String goodsCode;
   private String goodsName;
+  private String season;
+  private String goodsColour;
+  private String goodsSize;
   private String goodsModel;
   private String goodsUnit;
   private Integer goodsNum;

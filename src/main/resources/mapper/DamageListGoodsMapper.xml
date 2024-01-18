@@ -19,6 +19,9 @@
         <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
         <result column="goods_code" property="goodsCode" jdbcType="VARCHAR" />
         <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+        <result column="season" property="season" jdbcType="VARCHAR"/>
+        <result column="goods_colour" property="goodsColour" jdbcType="VARCHAR"/>
+        <result column="goods_size" property="goodsSize" jdbcType="VARCHAR"/>
         <result column="goods_model" property="goodsModel" jdbcType="VARCHAR" />
         <result column="goods_unit" property="goodsUnit" jdbcType="VARCHAR" />
         <result column="goods_num" property="goodsNum" jdbcType="INTEGER" />

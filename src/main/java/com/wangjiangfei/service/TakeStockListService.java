@@ -11,4 +11,6 @@ public interface TakeStockListService extends IService<TakeStockList> {
     void deleteByTakeStockId(String id);
 
     Map<String, Object> list(Integer page, Integer rows, TakeStockList takeStockList);
+
+    void updateTakeStockList(TakeStockList takeStockList);
 }

@@ -16,3 +16,14 @@ mybatis-plus:
   db-config:
     insert-fill: create_time,update_time
     update-fill: update_time
+
+
+#log
+logging:
+  config: classpath:logback-jxc.xml
+log:
+  level:
+    root: info
+    my: debug
+  file: logs/jxc-server.log
+  maxsize: 30MB

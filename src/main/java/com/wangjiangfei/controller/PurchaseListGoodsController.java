@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -142,5 +144,37 @@ public class PurchaseListGoodsController {
         Map<String, List<String[]>> stringListMap = EasyPoiUtil.readExcel(file);
         List<String> purchaseLists = purchaseListGoodsService.importPurchase(stringListMap);
         return new ServiceVO<>(SuccessCode.SUCCESS_CODE, SuccessCode.SUCCESS_MESS, purchaseLists);
+    }
+
+    /**
+     * 批量入库
+     *
+     * @param response
+     * @param takeStock
+     * @throws Exception
+     */
+    @RequestMapping("/export")
+    @RequiresPermissions(value = "批量入库")
+    public void download(HttpServletResponse response) {
+        try {
+            // path是指欲下载的文件的路径。
+            File file = new File("src/main/resources/static/template.xlsx");
+            FileInputStream fis = new FileInputStream(file);
+            byte[] buffer = new byte[fis.available()];
+            fis.read(buffer);
+            fis.close();
+            // 清空response
+            response.reset();
+            // 设置response的Header
+            response.addHeader("Content-Disposition", "attachment;filename=template.xlsx");
+            response.addHeader("Content-Length", "" + file.length());
+            OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
+            response.setContentType("application/octet-stream");
+            toClient.write(buffer);
+            toClient.flush();
+            toClient.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 }

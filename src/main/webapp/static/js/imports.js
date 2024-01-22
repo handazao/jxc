@@ -172,3 +172,7 @@ function uploadonline() {
     });
 }
 
+
+function download() {
+    window.location.href = '/purchaseListGoods/export';
+}

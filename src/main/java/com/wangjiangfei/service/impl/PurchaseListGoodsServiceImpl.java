@@ -64,7 +64,9 @@ public class PurchaseListGoodsServiceImpl implements PurchaseListGoodsService {
         User currentUser = userDao.findUserByName((String) SecurityUtils.getSubject().getPrincipal());
 
         purchaseList.setUserId(currentUser.getUserId());
-
+        if (purchaseList.getType() == null) {
+            purchaseList.setType(0);
+        }
         // 保存进货清单
         purchaseListGoodsDao.savePurchaseList(purchaseList);
 
